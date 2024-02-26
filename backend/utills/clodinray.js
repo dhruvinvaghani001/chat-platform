@@ -23,12 +23,16 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 
     //upload the file on clodinarry
-    const response = await cloudinary.uploader.upload(localFilePath);
-    console.log(response);
-    // return response;
+    const response = await cloudinary.uploader.upload(localFilePath, {
+      resource_type: "auto",
+      folder: "chat-app",
+    });
+    // console.log(response);
+    fs.unlinkSync(localFilePath);
+    return response;
   } catch (error) {
     console.log(error);
-    // fs.unlinkSync(localFilePath); //remove the localy saved temp file as the upload failed
+    fs.unlinkSync(localFilePath); //remove the localy saved temp file as the upload failed
     return null;
   }
 };

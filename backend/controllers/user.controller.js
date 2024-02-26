@@ -4,9 +4,10 @@ import { ApiError } from "../utills/ApiError.js";
 import { ApiResponse } from "../utills/ApiResponse.js";
 import { uploadOnCloudinary } from "../utills/clodinray.js";
 
-/*
+/*  
+    Handles User Regestration logic
     @req[body] : {username,email,password,confirmPasswod}
-    @utility : signup user (register user)
+    @description : signup user (register user)
     @routes : api/user/sign-up 
 */
 const signUp = asyncHandler(async (req, res) => {
@@ -27,20 +28,18 @@ const signUp = asyncHandler(async (req, res) => {
   }
 
   const avatarLocalFilePath = req.file?.path;
-  
+
   if (!avatarLocalFilePath) {
     throw new ApiError(400, "avatar image required !");
   }
 
-  const avataresponse = await uploadOnCloudinary(avatarLocalFilePath);
-
-  console.log(avataresponse);
+  const avataResponse = await uploadOnCloudinary(avatarLocalFilePath);
 
   const user = await User.create({
     username,
     email,
     password,
-  
+    avatar: avataResponse?.url,
   });
 
   if (!user) {
@@ -58,4 +57,44 @@ const signUp = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user: newUser }, "sign-up Successfully!"));
 });
 
-export { signUp };
+/* 
+  Handle login logic
+  @req[body] : {username,email,password}
+  @description : for user to login 
+  @routes : api/user/login
+*/
+const login = asyncHandler(async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    throw new ApiError(400, "All fields are Required !");
+  }
+
+  const user = await User.findOne({ $and: [{ username }, { email }] });
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist !");
+  }
+
+  const passCheck = await user.isPasswodCorrect(password);
+
+  if (!passCheck) {
+    throw new ApiError(409, "Password is not correct !");
+  }
+
+  const loginUser = await User.findById(user._id).select("-password");
+  const token = await user.genrateJwtToken();
+  res.cookie("token", token);
+
+  res.status(200).json(new ApiResponse(200, loginUser, "login successfully!"));
+});
+
+const logout = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  return res
+    .status(200)
+    .clearCookie("token")
+    .json(new ApiResponse(200, "", "logout successfully!"));
+});
+
+export { signUp, login, logout };
