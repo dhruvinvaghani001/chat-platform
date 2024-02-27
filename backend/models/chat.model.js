@@ -15,14 +15,14 @@ const chatSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    membes: [
+    members: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
     lastMessage: {
-      type: monogoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Chatmessage",
     },
   },
