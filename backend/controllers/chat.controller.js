@@ -21,7 +21,7 @@ const ChatAggeragtion = () => {
         pipeline: [
           {
             $project: {
-              usename: 1,
+              username: 1,
               email: 1,
               avatar: 1,
             },
@@ -92,10 +92,36 @@ const deleteCascadeMessages = asynHandler(async (chatId) => {
 });
 
 /**
+ * Handles request to get all users on platfom
+ *@returns : all available users in this platform
+ */
+
+const seachAvailableUsers = asynHandler(async (req, res) => {
+  const users = await User.aggregate([
+    {
+      $match: {
+        $ne: req.user._id,
+      },
+    },
+    {
+      $project: {
+        username: 1,
+        email: 1,
+        avatar: 1,
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "users fetched successfully!"));
+});
+
+/**
  * Handles the request to create a one-to-one chat or retrive existing chat
  * @params : reciverId
  * @returns : structued chat model
- * @routes : api/chat/:reciverId
+ * @routes : api/chat/c/:reciverId
  */
 const createOneToOneOrGetChat = asynHandler(async (req, res) => {
   const { reciverId } = req.params;
@@ -161,4 +187,99 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
     .json(new ApiResponse(200, createdChat[0], "Chat retrieved successfully"));
 });
 
-export { createOneToOneOrGetChat };
+/**
+ * Handles request to create group
+ * @req[body] : groupname , members array
+ * @returns : created group chat
+ * @description : to craete group chat
+ */
+const createGroup = asynHandler(async (req, res) => {
+  let { name, members } = req.body;
+
+  if (!name) {
+    throw new ApiError(400, "name field required!");
+  }
+  if (!members) {
+    throw new ApiError(400, "members array is required!");
+  }
+  if (members.includes(req.user._id.toString())) {
+    throw new ApiError(
+      400,
+      "group creato is alredy member of group so don't pass it !"
+    );
+  }
+
+  members = [...new Set([...members, req.user._id.toString()])];
+  members = members.map((id) => new mongoose.Types.ObjectId(id));
+
+  if (members.length < 3) {
+    throw new ApiError(400, "To create group minimum 3 memebers required!");
+  }
+
+  const groupChat = await Chat.create({
+    name,
+    members: members,
+    isGroup: true,
+    admin: req.user._id,
+  });
+
+  if (!groupChat) {
+    throw new ApiError(500, "Internal server Error while creating group chat!");
+  }
+
+  //structure chat
+  const chat = await Chat.aggregate([
+    {
+      $match: {
+        _id: groupChat._id,
+      },
+    },
+    ...ChatAggeragtion(),
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, chat[0], "group Chat created Sucessfully !"));
+});
+
+/**
+ * Handles request to get details of group details
+ * @params : string (ChatId)
+ * @returns : group chat with struture
+ */
+const getDetailsOfGroupChat = asynHandler(async (req, res) => {
+  const { chatId } = req.params;
+
+  const groupChat = await Chat.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(chatId),
+      },
+    },
+    ...ChatAggeragtion(),
+  ]);
+
+  if (!groupChat[0]) {
+    throw new ApiError(404, "group chat does not exist !");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, groupChat[0], "group details fetched!"));
+});
+
+/**
+ * Handles request to rename group
+ * @params : {sting}(chatId)
+ * @description : function to rename group name ,
+ * @returns : structured chat document of ChatId
+ */
+
+const renameGroup = asynHandler(async (req, res) => {
+    
+
+
+
+});
+
+export { createOneToOneOrGetChat, createGroup, getDetailsOfGroupChat };
