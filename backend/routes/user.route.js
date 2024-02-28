@@ -9,4 +9,6 @@ router.post("/sign-up", upload.single("avatar"), signUp);
 router.post("/login", login);
 router.post("/logout", VerifyJWT, logout);
 
+
+
 export default router;

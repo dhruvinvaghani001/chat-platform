@@ -48,9 +48,6 @@ const signUp = asyncHandler(async (req, res) => {
 
   const newUser = await User.findById(user._id).select("-password");
 
-  const token = await user.genrateJwtToken();
-
-  res.cookie("token", token);
 
   res
     .status(200)
@@ -85,7 +82,7 @@ const login = asyncHandler(async (req, res) => {
   const token = await user.genrateJwtToken();
   res.cookie("token", token);
 
-  res.status(200).json(new ApiResponse(200, loginUser, "login successfully!"));
+  res.status(200).json(new ApiResponse(200, {loginUser,token}, "login successfully!"));
 });
 
 const logout = asyncHandler(async (req, res) => {

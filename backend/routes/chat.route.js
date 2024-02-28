@@ -11,6 +11,7 @@ import {
   leaveGroup,
   removeMemberFromGroup,
   renameGroup,
+  seachAvailableUsers,
 } from "../controllers/chat.controller.js";
 
 const router = express.Router();
@@ -27,6 +28,8 @@ router.route("/group/:chatId/remove/:memberId").patch(removeMemberFromGroup)
 router.route("/group/leave/:chatId").patch(leaveGroup);
 
 router.route("/").get(getAllChats);
+
+router.route("/available-user").get(seachAvailableUsers);
 
 
 export default router;

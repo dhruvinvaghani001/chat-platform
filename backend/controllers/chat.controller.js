@@ -100,7 +100,9 @@ const seachAvailableUsers = asynHandler(async (req, res) => {
   const users = await User.aggregate([
     {
       $match: {
-        $ne: req.user._id,
+        _id: {
+          $ne: new mongoose.Types.ObjectId(req.user._id), 
+        },
       },
     },
     {
@@ -603,15 +605,14 @@ const leaveGroup = asynHandler(async (req, res) => {
 const getAllChats = asynHandler(async (req, res) => {
   const chat = await Chat.aggregate([
     {
-      '$match': {
-        'members': {
-          '$elemMatch': {
-            '$eq': new mongoose.Types.ObjectId(req.user._id)
-          }
-        }
-      }
-    }
-    ,
+      $match: {
+        members: {
+          $elemMatch: {
+            $eq: new mongoose.Types.ObjectId(req.user._id),
+          },
+        },
+      },
+    },
     ...ChatAggeragtion(),
     {
       $sort: {
@@ -636,4 +637,5 @@ export {
   removeMemberFromGroup,
   leaveGroup,
   getAllChats,
+  seachAvailableUsers,
 };
