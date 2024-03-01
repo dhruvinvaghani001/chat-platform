@@ -101,7 +101,7 @@ const seachAvailableUsers = asynHandler(async (req, res) => {
     {
       $match: {
         _id: {
-          $ne: new mongoose.Types.ObjectId(req.user._id), 
+          $ne: new mongoose.Types.ObjectId(req.user._id),
         },
       },
     },
@@ -131,11 +131,13 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
   const reciver = await User.findById(new mongoose.Types.ObjectId(reciverId));
 
   if (!reciver) {
-    throw new ApiError(404, "reciver does not exist !");
+    return res.status(404).json(new ApiError(404, "reciver does not exist !"));
   }
 
   if (reciver._id.toString() == req.user._id.toString()) {
-    throw new ApiError(400, "you can not chat with your self!");
+    return res
+      .status(400)
+      .json(new ApiError(400, "you can not chat with your self!"));
   }
 
   const chat = await Chat.aggregate([
@@ -181,7 +183,7 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
   ]);
 
   if (!createdChat[0]) {
-    throw new ApiError(500, "Internal server Error!");
+    return res.status(500).json(new ApiError(500, "Internal server Error!"));
   }
 
   return res
@@ -210,7 +212,7 @@ const deleteOneToOneChat = asynHandler(async (req, res) => {
   ]);
 
   if (!chat[0]) {
-    throw new ApiError(404, "Chat does not exist");
+    return res.status(404).json(new ApiError(404, "Chat does not exist"));
   }
 
   await Chat.deleteOne(chat._id);
@@ -232,23 +234,31 @@ const createGroup = asynHandler(async (req, res) => {
   let { name, members } = req.body;
 
   if (!name) {
-    throw new ApiError(400, "name field required!");
+    return res.status(400).json(new ApiError(400, "name field required!"));
   }
   if (!members) {
-    throw new ApiError(400, "members array is required!");
+    return res
+      .status(400)
+      .json(new ApiError(400, "members array is required!"));
   }
   if (members.includes(req.user._id.toString())) {
-    throw new ApiError(
-      400,
-      "group creato is alredy member of group so don't pass it !"
-    );
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          400,
+          "group creator is alredy member of group so don't pass it !"
+        )
+      );
   }
 
   members = [...new Set([...members, req.user._id.toString()])];
   members = members.map((id) => new mongoose.Types.ObjectId(id));
 
   if (members.length < 3) {
-    throw new ApiError(400, "To create group minimum 3 memebers required!");
+    return res
+      .status(400)
+      .json(new ApiError(400, "To create group minimum 3 memebers required!"));
   }
 
   const groupChat = await Chat.create({
@@ -259,7 +269,11 @@ const createGroup = asynHandler(async (req, res) => {
   });
 
   if (!groupChat) {
-    throw new ApiError(500, "Internal server Error while creating group chat!");
+    return res
+      .status(500)
+      .json(
+        new ApiError(500, "Internal server Error while creating group chat!")
+      );
   }
 
   //structure chat
@@ -296,7 +310,9 @@ const getDetailsOfGroupChat = asynHandler(async (req, res) => {
   ]);
 
   if (!groupChat[0]) {
-    throw new ApiError(404, "group chat does not exist !");
+    return res
+      .status(404)
+      .json(new ApiError(404, "group chat does not exist !"));
   }
 
   return res
@@ -317,7 +333,7 @@ const renameGroup = asynHandler(async (req, res) => {
   const { name } = req.body;
 
   if (!name) {
-    throw new ApiError(400, "name is requied!");
+    return res.status(400).json(ApiError(400, "name is requied!"));
   }
 
   const group = await Chat.aggregate([
@@ -330,10 +346,10 @@ const renameGroup = asynHandler(async (req, res) => {
   ]);
 
   if (!group[0]) {
-    throw new ApiError(404, "group does not exist !");
+    return res.status(404).json(new ApiError(404, "group does not exist !"));
   }
   if (group[0].admin.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "you are not admin!");
+    return res.status(401).json(new ApiError(401, "you are not admin!"));
   }
 
   const updatedGroup = await Chat.findByIdAndUpdate(
@@ -358,7 +374,7 @@ const renameGroup = asynHandler(async (req, res) => {
   ]);
 
   if (!groupChat[0]) {
-    throw new ApiError(500, "INternal server Error!");
+    return res.status(500).json(new ApiError(500, "INternal server Error!"));
   }
 
   return res
@@ -385,11 +401,11 @@ const deleteGroup = asynHandler(async (req, res) => {
   ]);
 
   if (!group[0]) {
-    throw new ApiError(404, "group not found!");
+    return res.status(404).json(new ApiError(404, "group not found!"));
   }
 
   if (group[0].admin.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "you are not admin!");
+    return res.status(401).json(new ApiError(401, "you are not admin!"));
   }
 
   const groupDelete = await Chat.deleteOne({
@@ -424,20 +440,22 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
   const user = await User.findById(new mongoose.Types.ObjectId(memberId));
 
   if (!groupChat[0]) {
-    throw new ApiError(404, "group does not exist !");
+    return res.status(404).json(new ApiError(404, "group does not exist !"));
   }
 
   if (!user) {
-    throw new ApiError(404, "user does not found !");
+    return res.status(404).json(new ApiError(404, "user does not found !"));
   }
 
   if (groupChat[0].admin.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "you are not admin !");
+    return res.status(401).json(new ApiError(401, "you are not admin !"));
   }
   const members = groupChat[0].members.map((id) => id.toString());
 
   if (members.includes(memberId)) {
-    throw new ApiError(400, "member alredy part of group chat !");
+    return res
+      .status(400)
+      .json(new ApiError(400, "member alredy part of group chat !"));
   }
 
   const updateGroup = await Chat.findByIdAndUpdate(
@@ -462,7 +480,7 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
   ]);
 
   if (!chat[0]) {
-    throw new ApiError(500, "Internal server Error!");
+    return res.status(500).json(new ApiError(500, "Internal server Error!"));
   }
 
   return res
@@ -492,20 +510,22 @@ const removeMemberFromGroup = asynHandler(async (req, res) => {
   const user = await User.findById(new mongoose.Types.ObjectId(memberId));
 
   if (!groupChat[0]) {
-    throw new ApiError(404, "group does not exist !");
+    return res.status(404).json(new ApiError(404, "group does not exist !"));
   }
 
   if (!user) {
-    throw new ApiError(404, "user does not found !");
+    return res.status(404).json(new ApiError(404, "user does not found !"));
   }
 
   if (groupChat[0].admin.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "you are not admin !");
+    return res.status(401).json(new ApiError(401, "you are not admin !"));
   }
   const members = groupChat[0].members.map((id) => id.toString());
 
   if (!members.includes(memberId)) {
-    throw new ApiError(400, "member is not part of group chat !");
+    return res
+      .status(400)
+      .json(new ApiError(400, "member is not part of group chat !"));
   }
 
   const updatedGroup = await Chat.findByIdAndUpdate(
@@ -530,7 +550,7 @@ const removeMemberFromGroup = asynHandler(async (req, res) => {
   ]);
 
   if (!chat[0]) {
-    throw new ApiError(500, "Internal Server Error!");
+    return res.status(500).json(new ApiError(500, "Internal Server Error!"));
   }
 
   return res
@@ -557,12 +577,14 @@ const leaveGroup = asynHandler(async (req, res) => {
   const groupChat = await Chat.findOne({ _id: chatId, isGroup: true });
 
   if (!groupChat) {
-    throw new ApiError(404, "group does not exist !");
+    return res.status(404).json(new ApiError(404, "group does not exist !"));
   }
   const members = groupChat.members.map((id) => id.toString());
 
   if (!members.includes(req.user._id.toString())) {
-    throw new ApiError(400, "you are not part of group!");
+    return res
+      .status(400)
+      .json(new ApiError(400, "you are not part of group!"));
   }
 
   const updatedGroup = await Chat.findByIdAndUpdate(
@@ -587,7 +609,7 @@ const leaveGroup = asynHandler(async (req, res) => {
   ]);
 
   if (!chat[0]) {
-    throw new ApiError(500, "internal server Error !");
+    return res.status(500).json(new ApiError(500, "internal server Error !"));
   }
 
   return res

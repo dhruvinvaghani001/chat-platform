@@ -14,23 +14,27 @@ const signUp = asyncHandler(async (req, res) => {
   const { username, email, password, confirmPassword } = req.body;
 
   if (!username || !email || !password || !confirmPassword) {
-    throw new ApiError(400, "All fields are requied !");
+    return res.status(400).json(new ApiError(400, "All fields are requied !"));
   }
 
   const existeUser = await User.findOne({ $or: [{ email }, { username }] });
 
   if (existeUser) {
-    throw new ApiError(409, "User Aledy exist with this username or email");
+    return res
+      .status(409)
+      .json(new ApiError(409, "User Aledy exist with this username or email"));
   }
 
   if (password != confirmPassword) {
-    throw new ApiError(409, "password and confirm password must be same");
+    return res
+      .status(409)
+      .json(new ApiError(409, "password and confirm password must be same"));
   }
 
   const avatarLocalFilePath = req.file?.path;
 
   if (!avatarLocalFilePath) {
-    throw new ApiError(400, "avatar image required !");
+    return res.status(400).json(new ApiError(400, "avatar image required !"));
   }
 
   const avataResponse = await uploadOnCloudinary(avatarLocalFilePath);
@@ -43,7 +47,7 @@ const signUp = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "Error while Sign-up !");
+    return res.status(400).json(new ApiError(400, "Error while Sign-up !"));
   }
 
   const newUser = await User.findById(user._id).select("-password");
@@ -61,20 +65,21 @@ const signUp = asyncHandler(async (req, res) => {
 */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body);
   if (!email || !password) {
-    throw new ApiError(400, "All fields are Required !");
+    return res.status(400).json(new ApiError(400, "All fields are Required !"));
   }
 
   const user = await User.findOne({ email: email });
 
   if (!user) {
-    throw new ApiError(404, "User does not exist !");
+    return res.status(404).json(new ApiError(404, "User does not exist !"));
   }
 
   const passCheck = await user.isPasswodCorrect(password);
 
   if (!passCheck) {
-    throw new ApiError(409, "Password is not correct !");
+    return res.status(409).json(new ApiError(409, "Password is not correct !"));
   }
 
   const loginUser = await User.findById(user._id).select("-password");

@@ -53,7 +53,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
   const chat = await Chat.findById(new mongoose.Types.ObjectId(chatId));
 
   if (!chat) {
-    throw new ApiError(404, "Chat not Found !");
+    return res.status(404).json( new ApiError(404, "Chat not Found !"));
   }
 
   const messages = await Chatmessage.aggregate([
@@ -87,13 +87,15 @@ const sendMessage = asyncHandler(async (req, res) => {
   const { content } = req.body;
 
   if (!content) {
-    throw new ApiError(400, "content required to send message!");
+    return res
+      .status(400)
+      .json(new ApiError(400, "content required to send message!"));
   }
 
   const chat = await Chat.findById(new mongoose.Types.ObjectId(chatId));
 
   if (!chat) {
-    throw new ApiError(404, "Chat not found !");
+    return res.staus(404).json(new ApiError(404, "Chat not found !"));
   }
 
   // create new message
@@ -104,7 +106,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   });
 
   if (!message) {
-    throw new ApiError(500, "message not created !");
+    return res.status(500).json(new ApiError(500, "message not created !"));
   }
 
   // update the last message to chat

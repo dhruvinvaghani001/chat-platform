@@ -10,12 +10,12 @@ const VerifyJWT = asyncHandler(async (req, res, next) => {
     req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    throw new ApiError(401, "Unauthenticated user !");
+    return res.status(401).json(new ApiError(401, "Unauthenticated user !"));
   }
 
   const decodedData = await jwt.verify(token, process.env.JWT_SECRET_KEY);
   if (!decodedData) {
-    throw new ApiError(401, "token expirres");
+    return res.status(401).json(new ApiError(401, "token expirres"));
   }
 
   req.user = decodedData;
