@@ -48,7 +48,6 @@ const signUp = asyncHandler(async (req, res) => {
 
   const newUser = await User.findById(user._id).select("-password");
 
-
   res
     .status(200)
     .json(new ApiResponse(200, { user: newUser }, "sign-up Successfully!"));
@@ -61,12 +60,12 @@ const signUp = asyncHandler(async (req, res) => {
   @routes : api/user/login
 */
 const login = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     throw new ApiError(400, "All fields are Required !");
   }
 
-  const user = await User.findOne({ $and: [{ username }, { email }] });
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     throw new ApiError(404, "User does not exist !");
@@ -80,9 +79,17 @@ const login = asyncHandler(async (req, res) => {
 
   const loginUser = await User.findById(user._id).select("-password");
   const token = await user.genrateJwtToken();
-  res.cookie("token", token);
+  const formatedUser = {
+    _id: loginUser.id,
+    username: loginUser.username,
+    email: loginUser.email,
+    avatar: loginUser.avatar,
+    token: token,
+  };
 
-  res.status(200).json(new ApiResponse(200, {loginUser,token}, "login successfully!"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, formatedUser, "login successfully!"));
 });
 
 const logout = asyncHandler(async (req, res) => {
