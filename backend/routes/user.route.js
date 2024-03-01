@@ -5,7 +5,7 @@ import VerifyJWT from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/sign-up", upload.single("avatar"), signUp);
+router.post("/signup", upload.single("avatar"), signUp);
 router.post("/login", login);
 router.post("/logout", VerifyJWT, logout);
 
