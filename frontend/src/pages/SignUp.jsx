@@ -17,7 +17,7 @@ const SignUp = () => {
         </div>
 
         <div className="form p-6 mt-0 md:mt-6">
-          <AuthForm type="sign-up" />
+          <AuthForm type="signup" />
         </div>
       </div>
     </div>

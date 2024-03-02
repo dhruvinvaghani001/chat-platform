@@ -1,5 +1,5 @@
 import React from "react";
-import { signUp } from "../api/api";
+
 
 const Home = () => {
 
@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <>
       <div>Home</div>
-      <button onClick={loginHandler}>login</button>
+      <button onClick={()=>{}}>login</button>
     </>
   );
 };

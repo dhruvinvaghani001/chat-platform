@@ -22,21 +22,22 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-/**
- * @param {*} data {username,email,password,confirmPassword}
- * @returns a <Promise> of api call
- */
-const signUp = (data) => {
-  return axiosInstance.post("/user/sign-up", data);
-};
+axiosInstance.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    error.message = error.response.data.message;
+    return Promise.reject(error);
+  }
+);
 
 /**
- *
- * @param {*} data
- * @returns api call <Promise> of login
+ * @param {*} data {username,email,password,confirmPassword} serverUrl (server url for authenctiocaton of user )
+ * @returns a <Promise> of api call
  */
-const login = (data) => {
-  return axiosInstance.post("/user/login", data);
+const autheticateUser = ({ serverURL, data }) => {
+  return axiosInstance.post(`/user/${serverURL}`, data);
 };
 
 /**
@@ -48,23 +49,11 @@ const logout = () => {
 };
 
 /**
- * 
+ *
  * @returns available users on platform to chat
  */
 const searchAvailableUser = () => {
   return axiosInstance.get("/chat/available-user");
 };
 
-/**
-  * @returns 
-*/
-
-
-
-
-
-
-
-
-
-export { signUp , login , logout , searchAvailableUser };
+export { autheticateUser, logout, searchAvailableUser };

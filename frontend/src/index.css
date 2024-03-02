@@ -26,6 +26,9 @@ body{
 .form_controls {
   @apply mt-6;
 }
+.error_text{
+  @apply text-red-700 text-lg mt-1;
+}
 
 
 

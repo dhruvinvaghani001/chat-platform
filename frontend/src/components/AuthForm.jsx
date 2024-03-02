@@ -3,8 +3,15 @@ import { useForm } from "react-hook-form";
 import Input from "./Input";
 import Button from "./Button";
 import { DevTool } from "@hookform/devtools";
+import { autheticateUser } from "../api/api";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { login as StoreLogin } from "../context/authSlice";
+import { useDispatch } from "react-redux";
 
 const AuthForm = ({ type }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {
     register,
     formState: { errors },
@@ -12,14 +19,38 @@ const AuthForm = ({ type }) => {
     control,
   } = useForm();
 
-  const onsubmit = (data) => {
-    if(type=="login"){}
+  const onsubmit = async (data) => {
+    try {
+      const formdata = new FormData();
+      for (let key in data) {
+        if (key != "avatar") {
+          formdata.append(key, data[key]);
+        } else {
+          formdata.append(key, data.avatar[0]);
+        }
+      }
+      const res = await autheticateUser({
+        serverURL: type,
+        data: type == "login" ? data : formdata,
+      });
+      console.log(res);
+      if (type === "login" && res.status === 200) {
+        toast.success(res?.data?.message);
+        dispatch(StoreLogin({ user: res.data.data }));
+        navigate("/");
+      } else {
+        toast.success(res?.data.message);
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.error(error?.message);
+    }
   };
 
   return (
     <>
       <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col">
-        {type == "sign-up" && (
+        {type == "signup" && (
           <div className="form_controls flex flex-col ">
             <Input
               title="username"
@@ -28,7 +59,9 @@ const AuthForm = ({ type }) => {
               classNameLabel=""
               classNameInput
             />
-            {errors.username && <span>This field is required</span>}
+            {errors.username && (
+              <span className="error_text">This field is required</span>
+            )}
           </div>
         )}
         <div className="form_controls flex flex-col ">
@@ -40,7 +73,9 @@ const AuthForm = ({ type }) => {
             classNameLabel=""
             classNameInput=""
           />
-          {errors.username && <span>This field is required</span>}
+          {errors.email && (
+            <span className="error_text">This field is required</span>
+          )}
         </div>
         <div className="form_controls flex flex-col ">
           <Input
@@ -51,22 +86,26 @@ const AuthForm = ({ type }) => {
             classNameLabel=""
             classNameInput=""
           />
-          {errors.username && <span>This field is required</span>}
+          {errors.password && (
+            <span className="error_text">This field is required</span>
+          )}
         </div>
-        {type == "sign-up" && (
+        {type == "signup" && (
           <div className="form_controls flex flex-col ">
             <Input
               title="confirm password"
               type="password"
               placeholder="confirm password"
-              {...register("confirmpassword", { required: true })}
+              {...register("confirmPassword", { required: true })}
               classNameLabel=""
               classNameInput=""
             />
-            {errors.username && <span>This field is required</span>}
+            {errors.confirmPassword && (
+              <span className="error_text">This field is required</span>
+            )}
           </div>
         )}
-        {type == "sign-up" && (
+        {type == "signup" && (
           <div className="form_controls flex flex-col ">
             <Input
               title="avatar"
@@ -77,11 +116,13 @@ const AuthForm = ({ type }) => {
               classNameLabel=""
               classNameInput="px-0 py-0"
             />
-            {errors.username && <span>This field is required</span>}
+            {errors.avatar && (
+              <span className="error_text">This field is required</span>
+            )}
           </div>
         )}
         <Button className="mt-8" type="submit">
-          Signin
+          {type == "signup" ? "SignUp" : "Login"}
         </Button>
       </form>
       <DevTool control={control}></DevTool>
