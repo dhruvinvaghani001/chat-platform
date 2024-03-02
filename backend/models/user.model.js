@@ -3,6 +3,7 @@ import bcrypt, { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
+
 dotenv.config();
 
 const userSchema = new mongoose.Schema(
@@ -43,20 +44,38 @@ userSchema.methods.isPasswodCorrect = async function (enterPassword) {
   return checkPassword;
 };
 
-userSchema.methods.genrateJwtToken = async function () {
-  const token = await jwt.sign(
+userSchema.methods.genrateAccessToken = async function () {
+  const accessToken = await jwt.sign(
     {
       _id: this._id,
       username: this.username,
       email: this.email,
     },
-    process.env.JWT_SECRET_KEY,
+    process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.TOKEN_EXPIRY,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
-  return token;
+  return accessToken;
 };
+
+userSchema.methods.genrateRefreshToken = async function () {
+  const refreshToken = await jwt.sign(
+    {
+      _id: this._id,
+      username: this.username,
+      email: this.email,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    }
+  );
+  return refreshToken;
+};
+
+
+
 
 const User = mongoose.model("User", userSchema);
 

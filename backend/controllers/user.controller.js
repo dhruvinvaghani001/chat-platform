@@ -3,6 +3,22 @@ import User from "../models/user.model.js";
 import { ApiError } from "../utills/ApiError.js";
 import { ApiResponse } from "../utills/ApiResponse.js";
 import { uploadOnCloudinary } from "../utills/clodinray.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const genrateAccessAndRefreshToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const acessToken = await user.genrateAccessToken();
+    const refreshToken = await user.genrateRefreshToken();
+    return { acessToken, refreshToken };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
 /*  
     Handles User Regestration logic
@@ -65,7 +81,6 @@ const signUp = asyncHandler(async (req, res) => {
 */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
   if (!email || !password) {
     return res.status(400).json(new ApiError(400, "All fields are Required !"));
   }
@@ -83,13 +98,25 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const loginUser = await User.findById(user._id).select("-password");
-  const token = await user.genrateJwtToken();
+  const { acessToken, refreshToken } = await genrateAccessAndRefreshToken(
+    user._id
+  );
+
+  console.log(refreshToken);
+
+  res.cookie("refreshtoken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
   const formatedUser = {
     _id: loginUser.id,
     username: loginUser.username,
     email: loginUser.email,
     avatar: loginUser.avatar,
-    token: token,
+    acessToken: acessToken,
   };
 
   res
@@ -97,13 +124,45 @@ const login = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, formatedUser, "login successfully!"));
 });
 
+const refreshAcessToken = asyncHandler(async (req, res) => {
+  const cookies = req.cookies;
+
+  if (!cookies?.refreshtoken) {
+    return res.status(400).json(new ApiError(400, "unauthanticated !"));
+  }
+
+  const decodedData = await jwt.verify(
+    cookies.refreshtoken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
+
+  if (!decodedData) {
+    return res.status(403).json(new ApiError(403, "forbidden!"));
+  }
+
+  const user = await User.findById(decodedData._id);
+  const acessToken = await user.genrateAccessToken();
+
+  const formatedUser = {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    avatar: user.avatar,
+    acessToken: acessToken,
+  };
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formatedUser , "new acesstoken genarted!"));
+});
+
 const logout = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   return res
     .status(200)
-    .clearCookie("token")
+    .clearCookie("refreshtoken")
     .json(new ApiResponse(200, "", "logout successfully!"));
 });
 
-export { signUp, login, logout };
+export { signUp, login, logout, refreshAcessToken };
