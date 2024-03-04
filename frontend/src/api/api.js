@@ -13,8 +13,9 @@ const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem("token");
-    config.headers.Authorization = `Bearer ${token}`;
+    const userString = localStorage.getItem("user");
+    const user = JSON.parse(userString);
+    config.headers.Authorization = `Bearer ${user?.acessToken}`;
     return config;
   },
   function (error) {
@@ -27,7 +28,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   function (error) {
-    error.message = error.response.data.message;
+    // error.message = error?.response?.data?.message;
     return Promise.reject(error);
   }
 );

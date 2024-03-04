@@ -11,15 +11,27 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      element: (
+        <Protected authentication>
+          <Home />
+        </Protected>
+      ),
     },
     {
       path: "/login",
-      element: <Login />,
+      element: (
+        <Protected>
+          <Login />
+        </Protected>
+      ),
     },
     {
       path: "/sign-up",
-      element: <SignUp />,
+      element: (
+        <Protected>
+          <SignUp />
+        </Protected>
+      ),
     },
   ]);
 
