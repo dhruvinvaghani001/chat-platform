@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useSelector } from "react-redux";
 
 const initialState = {
   status: localStorage?.getItem("user") ? true : false,
-  userData: localStorage?.getItem("user"),
+  userData: JSON.parse(localStorage?.getItem("user")),
 };
 
 const authSlice = createSlice({
@@ -24,3 +25,9 @@ const authSlice = createSlice({
 
 export default authSlice;
 export const { login, logOut } = authSlice.actions;
+
+export const useAuthContext = () => {
+  const userData = useSelector((state) => state.auth.userData);
+  const status = useSelector((state) => state.auth.status);
+  return { userData, status };
+};
