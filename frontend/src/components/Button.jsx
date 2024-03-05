@@ -4,7 +4,7 @@ const Button = ({ children, onclick, className = "", type }) => {
   return (
     <>
       <button
-        className={`px-4 py-2 md:px-8 md:py-4 bg-violet-600 rounded-md text-lg md:text-xl ${className}`}
+        className={`bg-violet-600 rounded-md  ${className}`}
         onClick={onclick}
         type={type}
       >
