@@ -139,27 +139,36 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
       .status(400)
       .json(new ApiError(400, "you can not chat with your self!"));
   }
+  [
+    
+  ]
 
   const chat = await Chat.aggregate([
     {
-      $match: {
-        isGroup: false,
-        $and: [
+      '$match': {
+        'isGroup': false, 
+        '$and': [
           {
-            members: { $elemMatch: { $eq: req.user._id } },
-          },
-          {
-            members: {
-              $elemMatch: { $eq: new mongoose.Types.ObjectId(reciverId) },
-            },
-          },
-        ],
-      },
+            'members': {
+              '$elemMatch': {
+                '$eq': new mongoose.Types.ObjectId(req.user._id)
+              }
+            }
+          }, {
+            'members': {
+              '$elemMatch': {
+                '$eq': new mongoose.Types.ObjectId(reciverId)
+              }
+            }
+          }
+        ]
+      }
     },
     ...ChatAggeragtion(),
-  ]);
+  ]); 
 
   if (chat.length) {
+    
     return res
       .status(200)
       .json(new ApiResponse(200, chat[0], "chat fetched Successfully!"));
@@ -188,7 +197,7 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, createdChat[0], "Chat retrieved successfully"));
+    .json(new ApiResponse(200, createdChat[0], "Chat created successfully"));
 });
 
 /**
