@@ -57,7 +57,7 @@ const AuthForm = ({ type }) => {
               placeholder="enter username"
               {...register("username", { required: true })}
               classNameLabel=""
-              classNameInput
+              classNameInput="p-2 md:p-4 text-md md:text-xl"
             />
             {errors.username && (
               <span className="error_text">This field is required</span>
@@ -71,7 +71,7 @@ const AuthForm = ({ type }) => {
             placeholder="enter email"
             {...register("email", { required: true })}
             classNameLabel=""
-            classNameInput=""
+            classNameInput="p-2 md:p-4 text-md md:text-xl"
           />
           {errors.email && (
             <span className="error_text">This field is required</span>
@@ -84,7 +84,7 @@ const AuthForm = ({ type }) => {
             placeholder="enter password"
             {...register("password", { required: true })}
             classNameLabel=""
-            classNameInput=""
+            classNameInput="p-2 md:p-4 text-md md:text-xl"
           />
           {errors.password && (
             <span className="error_text">This field is required</span>
@@ -97,8 +97,8 @@ const AuthForm = ({ type }) => {
               type="password"
               placeholder="confirm password"
               {...register("confirmPassword", { required: true })}
-              classNameLabel=""
-              classNameInput=""
+              classNameLabel=""  
+              classNameInput="p-2 md:p-4 text-md md:text-xl"
             />
             {errors.confirmPassword && (
               <span className="error_text">This field is required</span>
@@ -121,7 +121,7 @@ const AuthForm = ({ type }) => {
             )}
           </div>
         )}
-        <Button className="mt-8" type="submit">
+        <Button className="mt-8 px-4 py-2 md:px-8 md:py-4 text-lg md:text-xl" type="submit">
           {type == "signup" ? "SignUp" : "Login"}
         </Button>
       </form>

@@ -8,7 +8,7 @@ const Input = forwardRef(function Input(
     <>
       <label className={`text-md md:text-xl ${classNameLabel}`}>{title}</label>
       <input
-        className={`p-2 md:p-4 mt-2 rounded-md text-md md:text-xl ${classNameInput}`}
+        className={` mt-2 rounded-md  ${classNameInput}`}
         {...props}
         type={type}
         ref={ref}

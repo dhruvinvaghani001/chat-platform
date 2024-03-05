@@ -1,38 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { searchAvailableUser } from "../api/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logOut as storeLogout } from "../context/authSlice";
-
+import { Dialog, Transition } from "@headlessui/react";
+import { requestHandler } from "../utills";
+import SideBar from "../components/sidebar/SideBar";
+import Main from "../components/main/Main";
 
 const Home = () => {
-  
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  let [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
-    const fetchDatas = async () => {
-      try {
-        const res = await searchAvailableUser();
-        console.log(res);
-      } catch (error) {
-        console.log("Error:" + error);
-        console.log(error)
-        if (error.response.status === 401) {
-          toast.error("session expires !");
-          dispatch(storeLogout());
-          navigate("/login");
-        }
+    requestHandler(
+      async () => await searchAvailableUser(),
+      setLoading,
+      (res) => {
+        const { data } = res;
+        setUsers(data || []);
+      },
+      (err) => {
+        toast.error(err);
       }
-    };
-    fetchDatas();
+    );
   }, []);
 
   return (
     <>
-      <div>Home</div>
-      <button onClick={() => {}}>login</button>
+      <div className="w-full h-full">
+        <div className="flex w-full h-[100vh]">
+          <div className="w-1/4 ">
+            <SideBar />
+          </div>
+          <div className="w-3/4">
+            <Main />
+          </div>
+        </div>
+      </div>
     </>
   );
 };
