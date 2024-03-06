@@ -4,6 +4,7 @@ import { ApiError } from "../utills/ApiError.js";
 import { ApiResponse } from "../utills/ApiResponse.js";
 import Chatmessage from "../models/chatMessage.model.js";
 import asyncHandler from "express-async-handler";
+import { io } from "../socket/index.js";
 
 /**
  *  Aggregate Chat Messages
@@ -53,7 +54,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
   const chat = await Chat.findById(new mongoose.Types.ObjectId(chatId));
 
   if (!chat) {
-    return res.status(404).json( new ApiError(404, "Chat not Found !"));
+    return res.status(404).json(new ApiError(404, "Chat not Found !"));
   }
 
   const messages = await Chatmessage.aggregate([
@@ -61,11 +62,6 @@ const getAllMessages = asyncHandler(async (req, res) => {
       $match: { chat: new mongoose.Types.ObjectId(chatId) },
     },
     ...ChatMessageAggregation(),
-    {
-      $sort: {
-        createdAt: -1,
-      },
-    },
   ]);
 
   return res
@@ -95,7 +91,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   const chat = await Chat.findById(new mongoose.Types.ObjectId(chatId));
 
   if (!chat) {
-    return res.staus(404).json(new ApiError(404, "Chat not found !"));
+    return res.status(404).json(new ApiError(404, "Chat not found !"));
   }
 
   // create new message
@@ -129,6 +125,12 @@ const sendMessage = asyncHandler(async (req, res) => {
   ]);
 
   const recivedMessage = newMessage[0];
+
+  // updatedChat.members.forEach((memebr) => {
+  //   if (memebr._id != req.user._id) {
+  //     io.to(memebr._id.toString()).emit("new message", recivedMessage );
+  //   }
+  // });
 
   return res
     .status(200)
