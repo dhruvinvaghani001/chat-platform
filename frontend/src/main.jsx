@@ -6,12 +6,15 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import store from "./context/store.js";
 import { Provider } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <>
     <Provider store={store}>
-      <App />
+      <SocketContextProvider>
+        <App />
+      </SocketContextProvider>
     </Provider>
     <Toaster />
-  </React.StrictMode>
+  </>
 );

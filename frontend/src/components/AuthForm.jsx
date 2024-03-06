@@ -121,7 +121,7 @@ const AuthForm = ({ type }) => {
             )}
           </div>
         )}
-        <Button className="mt-8 px-4 py-2 md:px-8 md:py-4 text-lg md:text-xl" type="submit">
+        <Button className="mt-8 px-4 py-2 md:px-8 md:py-4 text-lg md:text-xl bg-violet-600" type="submit">
           {type == "signup" ? "SignUp" : "Login"}
         </Button>
       </form>

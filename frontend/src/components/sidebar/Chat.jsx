@@ -9,14 +9,14 @@ const Chat = ({ chat }) => {
   const dispatch = useDispatch();
 
   const { selectedChat } = useChatContext();
-
+  
   if (!chat.isGroup) {
     const oneToOneChatMemeber = chat.members.filter(
       (item) => item.username != userData.username
     )[0];
     return (
       <div
-        className={`flex justify-between bg-gray-700 mb-3 p-4 rounded-md items-center  duration-150 
+        className={`flex justify-between  mb-3 p-4 rounded-md items-center  duration-150 
         ${
           selectedChat?._id == chat._id
             ? "bg-gray-500"
@@ -45,7 +45,7 @@ const Chat = ({ chat }) => {
   } else {
     return (
       <div
-        className={`flex justify-between bg-gray-700 mb-3 p-4 rounded-md items-center  duration-150
+        className={`flex justify-between mb-3 p-4 rounded-md items-center  duration-150
         ${
           selectedChat?._id == chat._id
             ? "bg-gray-500"

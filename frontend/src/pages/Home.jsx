@@ -34,12 +34,12 @@ const Home = () => {
 
   return (
     <>
-      <div className="w-full h-full">
+      <div className="w-full h-[100vh]">
         <div className="flex w-full h-[100vh]">
-          <div className="w-1/4 ">
+          <div className="w-1/4 overflow-y-scroll">
             <SideBar />
           </div>
-          <div className="w-3/4">
+          <div className="w-3/4 overflow-y-scroll">
             <Main />
           </div>
         </div>

@@ -48,9 +48,11 @@ const ChatForm = ({ setIsOpen }) => {
     } else {
       if (groupName.trim() == "") {
         toast.error("group name is required!");
+        return ;
       }
       if (selectedUser.length < 2) {
         toast.error("There should be 2 minimum mebers to create a group!");
+        return ;
       }
       const members = selectedUser.map((iteam) => iteam._id);
       const data = {

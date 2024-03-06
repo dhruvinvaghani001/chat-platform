@@ -15,7 +15,7 @@ const AddChat = () => {
   }
   return (
     <div>
-      <Button className="px-2 py-4 text-xl" onclick={() => setIsOpen(true)}>
+      <Button className="px-2 py-4 text-xl bg-violet-600" onclick={() => setIsOpen(true)}>
         Add chat{" "}
       </Button>
       <Transition appear show={isOpen} as={Fragment}>

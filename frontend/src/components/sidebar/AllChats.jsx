@@ -17,7 +17,7 @@ const AllChats = () => {
       setLoading,
       (res) => {
         const { data } = res;
-        console.log(data);
+        // console.log(data);
         dispatch(setChats({ chat: data }));
       },
       (err) => {
