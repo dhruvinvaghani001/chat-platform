@@ -84,11 +84,30 @@ const createGroup = (data) => {
   return axiosInstance.post("/chat/group", data);
 };
 
+/**
+ * Handles api call for get all messages for particular chat id
+ @params : chatId
+ @returns a promise that resolve the response of api call
+ */
+const getMessagesByChatId = (chatId) => {
+  return axiosInstance.get(`/message/${chatId}`);
+};
+
+/**
+ * Handles api call for send message in chat ;
+ * @param {data,chatId} {data:string of message content} chatID : in which chat you want to send message
+ */
+const sendMessageInChat = ({ data, chatId }) => {
+  return axiosInstance.post(`/message/${chatId}`, data);
+};
+
 export {
   autheticateUser,
   logout,
   searchAvailableUser,
   createOneToOneChat,
   getAllChats,
-  createGroup
+  createGroup,
+  getMessagesByChatId,
+  sendMessageInChat,
 };

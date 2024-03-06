@@ -12,7 +12,7 @@ const requestHandler = async (api, setLoading, onSuccess, onError) => {
   try {
     const response = await api();
     const { data } = response;
-    console.log(data);
+    // console.log(data);
     if (data?.success) {
       onSuccess(data);
     }
