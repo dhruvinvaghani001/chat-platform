@@ -5,6 +5,7 @@ import { ApiResponse } from "../utills/ApiResponse.js";
 import Chatmessage from "../models/chatMessage.model.js";
 import asyncHandler from "express-async-handler";
 import { io } from "../socket/index.js";
+import { ChatAggeragtion } from "./chat.controller.js";
 
 /**
  *  Aggregate Chat Messages
@@ -116,6 +117,16 @@ const sendMessage = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+
+    const populatedUpdateChat = await Chat.aggregate([
+      {
+        $match:{
+          _id : updatedChat._id
+        }
+      },
+      ...ChatAggeragtion()
+    ])
+    console.log(populatedUpdateChat);
   // structure the message
   const newMessage = await Chatmessage.aggregate([
     {
@@ -126,11 +137,15 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   const recivedMessage = newMessage[0];
 
-  // updatedChat.members.forEach((memebr) => {
-  //   if (memebr._id != req.user._id) {
-  //     io.to(memebr._id.toString()).emit("new message", recivedMessage );
-  //   }
-  // });
+  updatedChat.members.forEach((memebr) => {
+    if (memebr._id != req.user._id) {
+      io.to(memebr._id.toString()).emit("new message", recivedMessage);
+    }
+  });
+
+  updatedChat.members.forEach((memebr) => {
+    io.to(memebr._id.toString()).emit("chat-update", populatedUpdateChat[0]);
+  });
 
   return res
     .status(200)

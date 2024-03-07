@@ -5,12 +5,13 @@ import asynHandler from "express-async-handler";
 import Chatmessage from "../models/chatMessage.model.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
+import { io } from "../socket/index.js";
 
 /**
  * @description : to structure chat model as our requirement
  * @returns : array of aggeragtion pipelines stages ;
  */
-const ChatAggeragtion = () => {
+export const ChatAggeragtion = () => {
   const pipeline = [
     {
       $lookup: {
@@ -139,36 +140,33 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
       .status(400)
       .json(new ApiError(400, "you can not chat with your self!"));
   }
-  [
-    
-  ]
 
   const chat = await Chat.aggregate([
     {
-      '$match': {
-        'isGroup': false, 
-        '$and': [
+      $match: {
+        isGroup: false,
+        $and: [
           {
-            'members': {
-              '$elemMatch': {
-                '$eq': new mongoose.Types.ObjectId(req.user._id)
-              }
-            }
-          }, {
-            'members': {
-              '$elemMatch': {
-                '$eq': new mongoose.Types.ObjectId(reciverId)
-              }
-            }
-          }
-        ]
-      }
+            members: {
+              $elemMatch: {
+                $eq: new mongoose.Types.ObjectId(req.user._id),
+              },
+            },
+          },
+          {
+            members: {
+              $elemMatch: {
+                $eq: new mongoose.Types.ObjectId(reciverId),
+              },
+            },
+          },
+        ],
+      },
     },
     ...ChatAggeragtion(),
-  ]); 
+  ]);
 
   if (chat.length) {
-    
     return res
       .status(200)
       .json(new ApiResponse(200, chat[0], "chat fetched Successfully!"));
@@ -191,13 +189,21 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
     ...ChatAggeragtion(),
   ]);
 
+  const payload = createdChat[0];
+
   if (!createdChat[0]) {
     return res.status(500).json(new ApiError(500, "Internal server Error!"));
   }
 
+  createdChat[0].members.forEach((member) => {
+    if (member._id != req.user._id) {
+      io.to(member._id.toString()).emit("new chat", payload);
+    }
+  });
+
   return res
-    .status(200)
-    .json(new ApiResponse(200, createdChat[0], "Chat created successfully"));
+    .status(201)
+    .json(new ApiResponse(201, createdChat[0], "Chat created successfully"));
 });
 
 /**
@@ -647,7 +653,7 @@ const getAllChats = asynHandler(async (req, res) => {
     ...ChatAggeragtion(),
     {
       $sort: {
-        createdAt: -1,
+        updatedAt: -1,
       },
     },
   ]);

@@ -22,17 +22,17 @@ io.on("connection", (socket) => {
     socket.join(userId.toString());
   });
 
-  socket.on("new-message", ({ message, chat }) => {
-    console.log(message);
-    console.log(chat);
-    const members = chat.members.filter(
-      (memebr) => memebr._id != message.sender._id
-    );
-    console.log(members) 
-    members.forEach((element) => {
-      socket.in(element._id.toString()).emit("new message recived", message);
-    });
-  });
+  // socket.on("new-message", ({ message, chat }) => {
+  //   console.log(message);
+  //   console.log(chat);
+  //   const members = chat.members.filter(
+  //     (memebr) => memebr._id != message.sender._id
+  //   );
+  //   console.log(members) 
+  //   members.forEach((element) => {
+  //     socket.in(element._id.toString()).emit("new message recived", message);
+  //   });
+  // });
 });
 
 export { app, server, io };
