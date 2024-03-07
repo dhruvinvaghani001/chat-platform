@@ -7,10 +7,12 @@ import toast from "react-hot-toast";
 import { XCircle } from "lucide-react";
 
 const MultipleSelectComboBox = ({ selected, setSelected }) => {
+  
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
-
+  console.log("selected");
+  console.log(selected);
   useEffect(() => {
     requestHandler(
       async () => await searchAvailableUser(),
@@ -47,7 +49,7 @@ const MultipleSelectComboBox = ({ selected, setSelected }) => {
       <div className="mt-2">
         <Combobox>
           <div className="">
-            {selected.length > 0 ? (
+            {selected?.length > 0 ? (
               <div className="flex flex-wrap w-full gap-2 mb-2">
                 {selected?.map((user,index) => {
                   return (
@@ -89,6 +91,7 @@ const MultipleSelectComboBox = ({ selected, setSelected }) => {
                   </div>
                 ) : (
                   filteredPeople.map((user) => {
+                    console.log(user);
                     if (!selected.includes(user)) {
                       return (
                         <Combobox.Option

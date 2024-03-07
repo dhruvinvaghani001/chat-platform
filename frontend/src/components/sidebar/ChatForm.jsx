@@ -35,7 +35,10 @@ const ChatForm = ({ setIsOpen }) => {
         setLoading,
         (res) => {
           const { data } = res;
-          dispatch(addChat({ chat: data }));
+          if (res.stausCode == 201) {
+            console.log("hello");
+            dispatch(addChat({ chat: data }));
+          }
           setIsOpen(false);
           if (data) {
             toast.success(res.message);
@@ -48,11 +51,11 @@ const ChatForm = ({ setIsOpen }) => {
     } else {
       if (groupName.trim() == "") {
         toast.error("group name is required!");
-        return ;
+        return;
       }
       if (selectedUser.length < 2) {
         toast.error("There should be 2 minimum mebers to create a group!");
-        return ;
+        return;
       }
       const members = selectedUser.map((iteam) => iteam._id);
       const data = {
@@ -105,7 +108,7 @@ const ChatForm = ({ setIsOpen }) => {
             )}
           </div>
 
-          <Button className="py-2 px-4 mt-4 flex  items-center">
+          <Button className="py-2 px-4 mt-4 flex  items-center bg-violet-700">
             <p className="mr-2 text-xl">{loading ? "Creating..." : "Create"}</p>
             {loading ? <LoadingSpinner /> : null}
           </Button>

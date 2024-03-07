@@ -56,7 +56,7 @@ const Main = () => {
         console.log(data);
         setMessages([...messages, data]);
         setInputMessage("");
-        socket.emit("new-message", {message:data,chat:selectedChat});
+        // socket.emit("new-message", {message:data,chat:selectedChat});
       },
       (err) => {
         toast.error(err);
@@ -68,8 +68,9 @@ const Main = () => {
 
   return (
     <div className="container mx-auto relative ">
-      <header className="fixed bg-slate-600 top-0 w-full py-10 shadow-md z-10">
-        <nav>To : jenil</nav>
+      <header className="fixed bg-slate-600 top-0 w-full py-10 shadow-md z-10 flex">
+        {/* <nav>To : jenil</nav> */}
+        {userData.username}
       </header>
 
       <div className="messages__container mt-40 pb-16 ">

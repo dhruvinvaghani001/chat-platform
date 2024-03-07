@@ -6,10 +6,12 @@ import { searchAvailableUser } from "../../api/api";
 import toast from "react-hot-toast";
 import { XCircle } from "lucide-react";
 
-const ComboBox = ({ selected, setSelected }) => {
+const ComboBox = ({ selected, setSelected, alredyMembers }) => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
+
+  console.log(alredyMembers);
 
   useEffect(() => {
     requestHandler(
@@ -61,29 +63,35 @@ const ComboBox = ({ selected, setSelected }) => {
                     Nothing found.
                   </div>
                 ) : (
-                  filteredPeople.map((user) => (
-                    <Combobox.Option
-                      key={user._id}
-                      className={({ active }) =>
-                        `cursor-default select-none py-2 pl-10 pr-4 ${
-                          active ? "bg-blue-900 text-white" : "text-gray-900"
-                        }`
-                      }
-                      value={user}
-                    >
-                      {({ selected, active }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? "font-medium" : "font-normal"
-                            }`}
-                          >
-                            {user.username}
-                          </span>
-                        </>
-                      )}
-                    </Combobox.Option>
-                  ))
+                  filteredPeople.map((user) => {
+                    if (!alredyMembers?.includes(user._id.toString())) {
+                      return (
+                        <Combobox.Option
+                          key={user._id}
+                          className={({ active }) =>
+                            `cursor-default select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-blue-900 text-white"
+                                : "text-gray-900"
+                            }`
+                          }
+                          value={user}
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {user.username}
+                              </span>
+                            </>
+                          )}
+                        </Combobox.Option>
+                      );
+                    }
+                  })
                 )}
               </Combobox.Options>
             </Transition>
