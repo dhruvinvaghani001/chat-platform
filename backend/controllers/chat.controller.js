@@ -439,9 +439,8 @@ const deleteGroup = asynHandler(async (req, res) => {
   }
   const chat = group[0];
   group[0].members?.forEach((member) => {
-    io.in(member._id.toString()).emit("delete-chat",chat);
-  })
-
+    io.in(member._id.toString()).emit("delete-chat", chat);
+  });
 
   const groupDelete = await Chat.deleteOne({
     _id: new mongoose.Types.ObjectId(chatId),
@@ -449,8 +448,6 @@ const deleteGroup = asynHandler(async (req, res) => {
   });
 
   await deleteCascadeMessages(chatId);
-
-  
 
   return res.status(200).json(new ApiResponse(200, {}, "Group deleted!"));
 });
@@ -520,6 +517,15 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
     return res.status(500).json(new ApiError(500, "Internal server Error!"));
   }
 
+  //emit chat-update event for all other memebrs in group to update chat !
+  chat[0]?.members.forEach((member) => {
+    if (member._id.toString() == memberId) return;
+    io.in(member._id.toString()).emit("chat-update", chat[0]);
+  });
+  const payload = chat[0];
+  // memeber which is added emit new-chat event to add event in there context
+  io.in(memberId).emit("new chat", payload);
+
   return res
     .status(200)
     .json(new ApiResponse(200, chat[0], "memebr added successfully!"));
@@ -586,6 +592,13 @@ const removeMemberFromGroup = asynHandler(async (req, res) => {
     ...ChatAggeragtion(),
   ]);
 
+  //update-chat for remaininig group memebers :
+  chat[0]?.members.forEach((member) => {
+    io.in(member._id.toString()).emit("chat-update", chat[0]);
+  });
+  //delete-chat from user which is removed :
+  io.in(memberId).emit("delete-chat", chat[0]);
+
   if (!chat[0]) {
     return res.status(500).json(new ApiError(500, "Internal Server Error!"));
   }
@@ -649,13 +662,20 @@ const leaveGroup = asynHandler(async (req, res) => {
     return res.status(500).json(new ApiError(500, "internal server Error !"));
   }
 
+  // emit chat-update event for remaining participate in group
+  chat[0].members.forEach((member) => {
+    io.in(member._id.toString()).emit("chat-update", chat[0]);
+  });
+  //now logged in user leave the group so delete chat from logged in user chat's context
+  io.in(req.user._id.toString()).emit("delete-chat", chat[0]);
+
   return res
     .status(200)
     .json(new ApiResponse(200, chat[0], "leave group successfully!"));
 });
 
 /**
- * Handles request to fetch all conversation of logged in user
+ * Handles request to fetch all conversation of logged in user    
  * @params : -
  * @desciption : to fetch all conversation in which logged in user is involve
  * @return : strcutued chat []

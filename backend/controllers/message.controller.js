@@ -117,16 +117,15 @@ const sendMessage = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-
-    const populatedUpdateChat = await Chat.aggregate([
-      {
-        $match:{
-          _id : updatedChat._id
-        }
+  const populatedUpdateChat = await Chat.aggregate([
+    {
+      $match: {
+        _id: updatedChat._id,
       },
-      ...ChatAggeragtion()
-    ])
-    console.log(populatedUpdateChat);
+    },
+    ...ChatAggeragtion(),
+  ]);
+  console.log(populatedUpdateChat);
   // structure the message
   const newMessage = await Chatmessage.aggregate([
     {
