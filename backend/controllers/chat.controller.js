@@ -165,6 +165,7 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
     },
     ...ChatAggeragtion(),
   ]);
+  console.log(chat[0]);
 
   if (chat.length) {
     return res
@@ -221,16 +222,24 @@ const deleteOneToOneChat = asynHandler(async (req, res) => {
     {
       $match: {
         _id: new mongoose.Types.ObjectId(chatId),
+        isGroup: false,
       },
     },
     ...ChatAggeragtion(),
   ]);
 
+  console.log(chat);
+
   if (!chat[0]) {
     return res.status(404).json(new ApiError(404, "Chat does not exist"));
   }
 
-  await Chat.deleteOne(chat._id);
+  chat[0]?.members.forEach((member) => {
+    io.in(member._id.toString()).emit("delete-chat", chat[0]);
+  });
+
+  const deletedChat = await Chat.deleteOne(chat[0]._id);
+  console.log(deletedChat);
   await deleteCascadeMessages(chatId);
 
   return res
@@ -300,6 +309,12 @@ const createGroup = asynHandler(async (req, res) => {
     },
     ...ChatAggeragtion(),
   ]);
+
+  chat[0]?.members?.forEach((member) => {
+    if (member._id != req.user._id) {
+      io.to(member._id.toString()).emit("new chat", chat[0]);
+    }
+  });
 
   return res
     .status(200)
@@ -422,6 +437,11 @@ const deleteGroup = asynHandler(async (req, res) => {
   if (group[0].admin.toString() !== req.user._id.toString()) {
     return res.status(401).json(new ApiError(401, "you are not admin!"));
   }
+  const chat = group[0];
+  group[0].members?.forEach((member) => {
+    io.in(member._id.toString()).emit("delete-chat",chat);
+  })
+
 
   const groupDelete = await Chat.deleteOne({
     _id: new mongoose.Types.ObjectId(chatId),
@@ -430,7 +450,9 @@ const deleteGroup = asynHandler(async (req, res) => {
 
   await deleteCascadeMessages(chatId);
 
-  return res.status(200).json(new ApiResponse(200));
+  
+
+  return res.status(200).json(new ApiResponse(200, {}, "Group deleted!"));
 });
 
 /**
