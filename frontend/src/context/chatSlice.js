@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 const initialState = {
   chats: [],
   selectedChat: null,
+  unreadMessages: [],
 };
 
 const chatSlice = createSlice({
@@ -34,6 +35,18 @@ const chatSlice = createSlice({
       );
       state.chats = filterdChat;
     },
+    setUnreadMessages: (state, action) => {
+      console.log(action.payload.message);
+      const newmessage = action.payload.message;
+      state.unreadMessages = [...state.unreadMessages, newmessage];
+    },
+    removeUnnreadMessages: (state, action) => {
+      const chatId = action.payload.chatId;
+      const filteredMessages = state.unreadMessages.filter(
+        (message) => message.chat.toString() != chatId
+      );
+      state.unreadMessages = filteredMessages;
+    },
   },
 });
 
@@ -43,11 +56,18 @@ export const {
   setChats,
   addChat,
   updateChat,
-  deleteChat
+  deleteChat,
+  setUnreadMessages,
+  removeUnnreadMessages
 } = chatSlice.actions;
 
+/**
+ * function to return all state directly using CustomHook
+ * 
+ */
 export const useChatContext = () => {
   const selectedChat = useSelector((state) => state.chat.selectedChat);
   const chats = useSelector((state) => state.chat.chats);
-  return { selectedChat, chats };
+  const unreadMessages = useSelector((state) => state.chat.unreadMessages);
+  return { selectedChat, chats, unreadMessages };
 };

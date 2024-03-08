@@ -11,8 +11,7 @@ const MultipleSelectComboBox = ({ selected, setSelected }) => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
-  console.log("selected");
-  console.log(selected);
+  
   useEffect(() => {
     requestHandler(
       async () => await searchAvailableUser(),
@@ -91,7 +90,6 @@ const MultipleSelectComboBox = ({ selected, setSelected }) => {
                   </div>
                 ) : (
                   filteredPeople.map((user) => {
-                    console.log(user);
                     if (!selected.includes(user)) {
                       return (
                         <Combobox.Option

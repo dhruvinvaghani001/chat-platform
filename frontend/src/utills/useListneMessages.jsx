@@ -3,6 +3,9 @@ import { useSocketContext } from "../context/SocketContext";
 import {
   addChat,
   deleteChat,
+  removeUnnreadMessages,
+  setSelectedChat,
+  setUnreadMessages,
   updateChat,
   useChatContext,
 } from "../context/chatSlice";
@@ -19,10 +22,10 @@ const useListenMessages = () => {
 
   useEffect(() => {
     socket?.on("new message", (message) => {
-      console.log("hello");
-      console.log(message);
-      if (message.chat == selectedChat._id) {
+      if (message.chat == selectedChat?._id) {
         setMessages([...messages, message]);
+      } else {
+        dispatch(setUnreadMessages({ message: message }));
       }
     });
 
@@ -42,7 +45,7 @@ const useListenMessages = () => {
 
   useEffect(() => {
     socket?.on("chat-update", (chat) => {
-      console.log("event getting for chat-update");
+      console.log("updated chat");
       console.log(chat);
       dispatch(updateChat({ chat: chat }));
     });
@@ -54,8 +57,10 @@ const useListenMessages = () => {
 
   useEffect(() => {
     socket?.on("delete-chat", (chat) => {
-      console.log("event for deleting chat !");
       dispatch(deleteChat({ chat: chat }));
+      dispatch(removeUnnreadMessages({ chatId: chat._id.toString() }));
+      dispatch(setSelectedChat({ chat: null }));
+      setMessages([]);
     });
     return () => {
       socket?.off("delete-chat");

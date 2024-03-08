@@ -70,7 +70,6 @@ const createOneToOneChat = (userId) => {
  * get all chats in which user is part of it ;
  * @returns a promise that resolve to the response of the api call
  */
-
 const getAllChats = () => {
   return axiosInstance.get("/chat");
 };
@@ -112,7 +111,31 @@ const deleteChats = ({ type, chatId }) => {
   );
 };
 
+/**
+ * Handles request to leave a partiular group:
+ * @param {string} chatId
+ * @returns
+ */
+const leaveGroup = (chatId) => {
+  return axiosInstance.patch(`chat/group/leave/${chatId}`);
+};
+/**
+ * Handles a request to remove memeber from group:
+ * @param {} (chatId,memberId)
+ * @returns return a promise
+ */
+const removeMemberFromGroup = ({ chatId, memberId }) => {
+  return axiosInstance.patch(`chat/group/${chatId}/remove/${memberId}`);
+};
 
+/**
+ * Handles a api call for add memeber in group !
+ * @param {string,string} {chatId,memberId}
+ * @returns a promise which resolve add functionality in group
+ */
+const addMemberInGroup = ({ chatId, memberId }) => {
+  return axiosInstance.patch(`chat/group/${chatId}/add/${memberId}`);
+};
 
 export {
   autheticateUser,
@@ -124,4 +147,7 @@ export {
   getMessagesByChatId,
   sendMessageInChat,
   deleteChats,
+  leaveGroup,
+  removeMemberFromGroup,
+  addMemberInGroup
 };

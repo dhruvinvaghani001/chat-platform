@@ -46,7 +46,7 @@ const ComboBox = ({ selected, setSelected, alredyMembers }) => {
             <div className=" w-full cursor-default overflow-hidden rounded-lg  text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
               <Combobox.Input
                 className="w-full border-none py-3 pl-3 pr-10 text-sm leading-5 text-white focus:ring-0 focus:outline-none "
-                displayValue={() => selected.username}
+                displayValue={() => selected?.username}
                 onChange={(event) => setQuery(event.target.value)}
               />
             </div>
