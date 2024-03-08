@@ -27,11 +27,24 @@ const chatSlice = createSlice({
       );
       state.chats = [updatedChat, ...remainingChat];
     },
+    deleteChat: (state, action) => {
+      const chatTodelete = action.payload.chat;
+      const filterdChat = state.chats.filter(
+        (chat) => chat._id != chatTodelete._id
+      );
+      state.chats = filterdChat;
+    },
   },
 });
 
 export default chatSlice;
-export const { setSelectedChat, setChats, addChat,updateChat } = chatSlice.actions;
+export const {
+  setSelectedChat,
+  setChats,
+  addChat,
+  updateChat,
+  deleteChat
+} = chatSlice.actions;
 
 export const useChatContext = () => {
   const selectedChat = useSelector((state) => state.chat.selectedChat);

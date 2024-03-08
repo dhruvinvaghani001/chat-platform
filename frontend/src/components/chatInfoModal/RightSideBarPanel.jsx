@@ -5,12 +5,39 @@ import Button from "../Button";
 import ChatMemebers from "./ChatMemebers";
 import MultipleSelectComboBox from "../sidebar/MultipleSelectComboBox";
 import ComboBox from "../sidebar/ComboBox";
+import { requestHandler } from "../../utills";
+import { deleteChats } from "../../api/api";
+import toast from "react-hot-toast";
+import { useChatContext } from "../../context/chatSlice";
 
 const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
   const { userData } = useAuthContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const alredyInGroup = chat.members.map((user) => user._id.toString());
   const [members, setMembers] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const handleDeleteChat = () => {
+    const isProceed = confirm("are you sure wan to delete chat with ");
+    if (isProceed) {
+      requestHandler(
+        async () => await deleteChats({ type: chat.isGroup, chatId: chat._id }),
+        setLoading,
+        (res) => {
+          const { data } = res;
+          console.log(res);
+          toast.success(res.message);
+          toggleIsOpen();
+        },
+        (err) => {
+          toast.error(err);
+        }
+      );
+    }
+  };
+
+  const { selectedChat } = useChatContext();
+  console.log(selectedChat);
 
   return (
     <div className="">
@@ -58,9 +85,13 @@ const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
                   </Button>
                 </div>
               )}
-              {chat.isGroup && chat.admin == userData._id && (
+              {((chat.isGroup && chat.admin == userData._id) ||
+                !chat.isGroup) && (
                 <div>
-                  <Button className="flex items-center text-xl bg-red-600 py-2 justify-center w-full">
+                  <Button
+                    onclick={handleDeleteChat}
+                    className="flex items-center text-xl bg-red-600 py-2 justify-center w-full"
+                  >
                     Delete Chat <Trash2 width={40} className="mr-4" />
                   </Button>
                 </div>

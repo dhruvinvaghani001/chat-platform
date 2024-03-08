@@ -9,9 +9,9 @@ const ChatMemebers = ({ chat }) => {
     <>
       <div className="memebers mt-10">
         <h1 className="text-xl mb-2">Members</h1>
-        {chat.members.map((member) => {
+        {chat.members.map((member,index) => {
           return (
-            <div className="mb-6 flex items-center justify-between bg-gray-700 p-2 rounded-md">
+            <div className="mb-6 flex items-center justify-between bg-gray-700 p-2 rounded-md" key={index}>
               <div className="flex items-center">
                 <div className="profile__img">
                   <img

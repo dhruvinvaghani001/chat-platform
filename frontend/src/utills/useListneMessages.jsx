@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 import { useSocketContext } from "../context/SocketContext";
-import { addChat, updateChat, useChatContext } from "../context/chatSlice";
+import {
+  addChat,
+  deleteChat,
+  updateChat,
+  useChatContext,
+} from "../context/chatSlice";
 import { useAuthContext } from "../context/authSlice";
 import useMessages from "../context/zustand/message";
 import { useDispatch } from "react-redux";
@@ -44,6 +49,16 @@ const useListenMessages = () => {
 
     return () => {
       socket?.off("chat-update");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on("delete-chat", (chat) => {
+      console.log("event for deleting chat !");
+      dispatch(deleteChat({ chat: chat }));
+    });
+    return () => {
+      socket?.off("delete-chat");
     };
   }, [socket]);
 };

@@ -101,6 +101,19 @@ const sendMessageInChat = ({ data, chatId }) => {
   return axiosInstance.post(`/message/${chatId}`, data);
 };
 
+/**
+ * Handles api call for delete one to one chat !
+ * @param {string} chatId
+ * @returns
+ */
+const deleteChats = ({ type, chatId }) => {
+  return axiosInstance.delete(
+    `chat/${type == false ? "c" : "group"}/${chatId}`
+  );
+};
+
+
+
 export {
   autheticateUser,
   logout,
@@ -110,4 +123,5 @@ export {
   createGroup,
   getMessagesByChatId,
   sendMessageInChat,
+  deleteChats,
 };
