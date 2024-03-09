@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllChats } from "../../api/api";
 import { requestHandler } from "../../utills";
-import AddChat from "./AddChat";
+import SideBarHeader from "./SideBarHeader";
 import { useDispatch } from "react-redux";
 import { setChats } from "../../context/chatSlice";
 import toast from "react-hot-toast";
@@ -11,7 +11,7 @@ const SideBar = () => {
   return (
     <div>
       <div className="flex justify-center items-center flex-col ">
-        <AddChat />
+        <SideBarHeader />
         <AllChats />
       </div>
     </div>

@@ -1,8 +1,4 @@
-import React, { useRef } from "react";
-import Input from "../components/Input";
-import { useForm } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
-import Button from "../components/Button";
+import React from "react";
 import AuthForm from "../components/AuthForm";
 
 const SignUp = () => {

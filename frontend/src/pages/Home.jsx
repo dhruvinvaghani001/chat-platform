@@ -1,13 +1,12 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { searchAvailableUser } from "../api/api";
+import React, { useEffect, useState } from "react";
+import { getUnreadMessages, searchAvailableUser } from "../api/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logOut as storeLogout } from "../context/authSlice";
-import { Dialog, Transition } from "@headlessui/react";
 import { requestHandler } from "../utills";
 import SideBar from "../components/sidebar/SideBar";
 import Main from "../components/main/Main";
+import { setintialUnreadMessages, useChatContext } from "../context/chatSlice";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -18,6 +17,8 @@ const Home = () => {
 
   let [isOpen, setIsOpen] = useState(false);
 
+  const { unreadMessages } = useChatContext();
+
   useEffect(() => {
     requestHandler(
       async () => await searchAvailableUser(),
@@ -25,6 +26,21 @@ const Home = () => {
       (res) => {
         const { data } = res;
         setUsers(data || []);
+      },
+      (err) => {
+        toast.error(err);
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    requestHandler(
+      async () => await getUnreadMessages(),
+      setLoading,
+      (res) => {
+        console.log(res);
+        const { data } = res;
+        dispatch(setintialUnreadMessages({ messages: data }));
       },
       (err) => {
         toast.error(err);

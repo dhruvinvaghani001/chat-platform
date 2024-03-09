@@ -10,10 +10,14 @@ import { MoreVertical } from "lucide-react";
 import RightSideBarPanel from "../chatInfoModal/RightSideBarPanel";
 import Modal from "react-responsive-modal";
 import { Bell } from "lucide-react";
+import { requestHandler } from "../../utills";
+import { deleteUnreadMessages } from "../../api/api";
+import toast from "react-hot-toast";
 
 const Chat = ({ chat }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const { userData } = useAuthContext();
   const { selectedChat, unreadMessages } = useChatContext();
@@ -22,18 +26,13 @@ const Chat = ({ chat }) => {
     setOpen(!open);
   };
 
-  const notificationCount = unreadMessages.filter(
+  const notificationCount = unreadMessages?.filter(
     (message) => message.chat.toString() == chat._id.toString()
   ).length;
 
   const oneToOneChatMemeber = chat.members.filter(
     (item) => item.username != userData.username
   )[0];
-
-  // console.log("check");
-  // console.log(chat?.lastMessage?.sender._id.toString());
-  // console.log(userData._id.toString())
-  // console.log(chat?.lastMessage?.sender._id.toString() == userData._id.toString());
 
   return (
     <div>
@@ -49,6 +48,17 @@ const Chat = ({ chat }) => {
         onClick={() => {
           dispatch(setSelectedChat({ chat: chat }));
           dispatch(removeUnnreadMessages({ chatId: chat._id.toString() }));
+          requestHandler(
+            async () => await deleteUnreadMessages(chat._id),
+            setLoading,
+            (res) => {
+              const { data } = res;
+              console.log(data);
+            },
+            (err) => {
+              toast.error(err);
+            }
+          );
         }}
       >
         <div className="flex items-center">

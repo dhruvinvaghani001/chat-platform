@@ -1,32 +1,9 @@
 import React, { Fragment, useState } from "react";
-import Button from "../Button";
 import { Transition, Dialog } from "@headlessui/react";
-import ChatForm from "./ChatForm";
-import { LogOut } from "lucide-react";
 
-const AddChat = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  function closeModal() {
-    setIsOpen(false);
-  }
+const Modal = ({ isOpen, closeModal, children }) => {
   return (
-    <div>
-      <div className="flex items-center">
-        <Button
-          className="px-2 py-4 text-xl bg-violet-600"
-          onclick={() => setIsOpen(true)}
-        >
-          Add chat{" "}
-        </Button>
-        <Button
-          className="px-2 py-4 text-xl bg-violet-600 rounded-full"
-          onclick={() => {}}
-        >
-          <LogOut/>
-        </Button>
-      </div>
-
+    <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -52,23 +29,14 @@ const AddChat = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-xl font-medium leading-6 text-gray-900 justify-center"
-                  >
-                    Create Chat
-                  </Dialog.Title>
-                  {/* here chat form will be placed */}
-                  <ChatForm setIsOpen={setIsOpen} />
-                </Dialog.Panel>
+                {children}
               </Transition.Child>
             </div>
           </div>
         </Dialog>
       </Transition>
-    </div>
+    </>
   );
 };
 
-export default AddChat;
+export default Modal;

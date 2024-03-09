@@ -25,6 +25,7 @@ const useListenMessages = () => {
       if (message.chat == selectedChat?._id) {
         setMessages([...messages, message]);
       } else {
+        console.log("event for unreadmesage");
         dispatch(setUnreadMessages({ message: message }));
       }
     });

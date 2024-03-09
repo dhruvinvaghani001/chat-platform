@@ -1,8 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import Input from "./Input";
-import Button from "./Button";
-import { DevTool } from "@hookform/devtools";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 import { autheticateUser } from "../api/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -97,7 +96,7 @@ const AuthForm = ({ type }) => {
               type="password"
               placeholder="confirm password"
               {...register("confirmPassword", { required: true })}
-              classNameLabel=""  
+              classNameLabel=""
               classNameInput="p-2 md:p-4 text-md md:text-xl"
             />
             {errors.confirmPassword && (
@@ -121,11 +120,13 @@ const AuthForm = ({ type }) => {
             )}
           </div>
         )}
-        <Button className="mt-8 px-4 py-2 md:px-8 md:py-4 text-lg md:text-xl bg-violet-600" type="submit">
+        <Button
+          className="mt-8 px-4 py-2 md:px-8 md:py-4 text-lg md:text-xl bg-violet-600"
+          type="submit"
+        >
           {type == "signup" ? "SignUp" : "Login"}
         </Button>
       </form>
-      <DevTool control={control}></DevTool>
     </>
   );
 };

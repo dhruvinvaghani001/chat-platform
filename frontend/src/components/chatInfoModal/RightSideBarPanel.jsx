@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../../context/authSlice";
 import { Trash2, UserPlus } from "lucide-react";
-import Button from "../Button";
+import Button from "../ui/Button";
 import ChatMemebers from "./ChatMemebers";
 import MultipleSelectComboBox from "../sidebar/MultipleSelectComboBox";
 import ComboBox from "../sidebar/ComboBox";

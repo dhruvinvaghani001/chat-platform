@@ -3,14 +3,14 @@ import { useChatContext } from "../../context/chatSlice";
 import { requestHandler } from "../../utills";
 import { getMessagesByChatId, sendMessageInChat } from "../../api/api";
 import toast from "react-hot-toast";
-import Input from "../Input";
-import Button from "../Button";
-import moment from "moment";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 import { useAuthContext } from "../../context/authSlice";
 import { useSocketContext } from "../../context/SocketContext";
 import useMessages from "../../context/zustand/message";
 import useListenMessages from "../../utills/useListneMessages";
 import Message from "./Message";
+import Chat from "../sidebar/Chat";
 
 const Main = () => {
   const { selectedChat } = useChatContext();
@@ -37,6 +37,7 @@ const Main = () => {
       );
     }
   }, [selectedChat]);
+  
 
   useEffect(() => {
     lastmessageIndex.current?.scrollIntoView({ behavior: "smooth" });
@@ -65,12 +66,32 @@ const Main = () => {
 
   useListenMessages();
 
+  const chat = selectedChat;
+  const oneToOneChatMemeber = chat?.members?.filter(
+    (item) => item.username != userData?.username
+  )[0];
+
   return (
     <div className="container mx-auto relative ">
-      <header className="fixed bg-slate-600 top-0 w-full py-10 shadow-md z-10 flex">
-        {/* <nav>To : jenil</nav> */}
-        {userData?.username}
-      </header>
+      {selectedChat && (
+        <header className="fixed bg-slate-600 top-0 w-full py-7 shadow-md z-10 flex">
+          {/* <nav>To : jenil</nav> */}
+          {/* <Chat chat={selectedChat} /> */}
+
+          <div className="profile__img mr-4 flex items-center ">
+            <img
+              src={chat?.isGroup ? "vite.svg" : oneToOneChatMemeber?.avatar}
+              alt={chat?.isGroup ? chat?.name : oneToOneChatMemeber?.username}
+              height={50}
+              width={50}
+              className="rounded-full"
+            />
+            <div>
+              {chat?.isGroup ? chat?.name : oneToOneChatMemeber?.username}
+            </div>
+          </div>
+        </header>
+      )}
 
       <div className="messages__container mt-40 pb-16 ">
         {!selectedChat && (

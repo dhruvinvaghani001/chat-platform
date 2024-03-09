@@ -137,6 +137,15 @@ const addMemberInGroup = ({ chatId, memberId }) => {
   return axiosInstance.patch(`chat/group/${chatId}/add/${memberId}`);
 };
 
+const getUnreadMessages = () => {
+  return axiosInstance.get(`unread-message/`);
+};
+
+const deleteUnreadMessages = (chatId) => {
+  console.log(chatId);
+  return axiosInstance.delete(`unread-message/${chatId}`);
+};
+
 export {
   autheticateUser,
   logout,
@@ -149,5 +158,7 @@ export {
   deleteChats,
   leaveGroup,
   removeMemberFromGroup,
-  addMemberInGroup
+  addMemberInGroup,
+  getUnreadMessages,
+  deleteUnreadMessages,
 };

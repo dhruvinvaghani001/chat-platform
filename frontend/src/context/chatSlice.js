@@ -39,10 +39,33 @@ const chatSlice = createSlice({
       );
       state.chats = filterdChat;
     },
+    setintialUnreadMessages: (state, action) => {
+      const map = new Map();
+      const newUnreadWhole = [
+        ...state.unreadMessages,
+        ...action.payload.messages,
+      ];
+      newUnreadWhole.forEach((obj) => {
+        map.set(obj._id.toString(), obj);
+      });
+
+      const uniqueObjectArray = [...map.values()];
+
+      state.unreadMessages = uniqueObjectArray;
+      localStorage.setItem(
+        "unread-messages",
+        JSON.stringify(state.unreadMessages)
+      );
+    },
     setUnreadMessages: (state, action) => {
-      console.log(action.payload.message);
-      const newmessage = action.payload.message;
-      state.unreadMessages = [...state.unreadMessages, newmessage];
+      const map = new Map();
+      const newUnreadWhole = [...state.unreadMessages, action.payload.message];
+      console.log(newUnreadWhole);
+      newUnreadWhole.forEach((obj) => {
+        map.set(obj._id.toString(), obj);
+      });
+      const uniqueObjectArray = [...map.values()];
+      state.unreadMessages = uniqueObjectArray;
       localStorage.setItem(
         "unread-messages",
         JSON.stringify(state.unreadMessages)
@@ -68,6 +91,7 @@ export const {
   setChats,
   addChat,
   updateChat,
+  setintialUnreadMessages,
   deleteChat,
   setUnreadMessages,
   removeUnnreadMessages,

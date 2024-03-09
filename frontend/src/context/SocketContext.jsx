@@ -14,11 +14,11 @@ const SocketContextProvider = ({ children }) => {
       setSocket(socketInstance);
 
       return () => {
-        socketInstance.close();
+        socketInstance?.close();
       };
     } else {
       if (socket) {
-        socketInstance.close();
+        socketInstance?.close();
         setSocket(null);
       }
     }
@@ -26,7 +26,7 @@ const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     socket?.emit("setup", { userId: userData._id });
-  }, [socket]);
+  },[socket]);
 
   return (
     <socketContext.Provider value={{ socket }}>

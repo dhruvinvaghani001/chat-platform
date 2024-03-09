@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import ComboBox from "./ComboBox";
-import Button from "../Button";
+import Button from "../ui/Button";
 import { requestHandler } from "../../utills";
 import { createGroup, createOneToOneChat } from "../../api/api";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import Toggle from "../ui/Toggle";
 import MultipleSelectComboBox from "./MultipleSelectComboBox";
-import Input from "../Input";
+import Input from "../ui/Input";
 import { addChat } from "../../context/chatSlice";
 import { useDispatch } from "react-redux";
 
