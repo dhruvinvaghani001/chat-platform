@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 const initialState = {
   chats: [],
-  selectedChat: null,
-  unreadMessages: [],
+  selectedChat: JSON.parse(localStorage?.getItem("selected-chat")) || null,
+  unreadMessages: JSON.parse(localStorage?.getItem("unread-messages")) || [],
 };
 
 const chatSlice = createSlice({
@@ -13,6 +13,10 @@ const chatSlice = createSlice({
   reducers: {
     setSelectedChat: (state, action) => {
       state.selectedChat = action.payload.chat;
+      localStorage.setItem(
+        "selected-chat",
+        JSON.stringify(action.payload.chat)
+      );
     },
     setChats: (state, action) => {
       state.chats = action.payload.chat;
@@ -39,6 +43,10 @@ const chatSlice = createSlice({
       console.log(action.payload.message);
       const newmessage = action.payload.message;
       state.unreadMessages = [...state.unreadMessages, newmessage];
+      localStorage.setItem(
+        "unread-messages",
+        JSON.stringify(state.unreadMessages)
+      );
     },
     removeUnnreadMessages: (state, action) => {
       const chatId = action.payload.chatId;
@@ -46,6 +54,10 @@ const chatSlice = createSlice({
         (message) => message.chat.toString() != chatId
       );
       state.unreadMessages = filteredMessages;
+      localStorage.setItem(
+        "unread-messages",
+        JSON.stringify(state.unreadMessages)
+      );
     },
   },
 });
@@ -58,12 +70,12 @@ export const {
   updateChat,
   deleteChat,
   setUnreadMessages,
-  removeUnnreadMessages
+  removeUnnreadMessages,
 } = chatSlice.actions;
 
 /**
  * function to return all state directly using CustomHook
- * 
+ *
  */
 export const useChatContext = () => {
   const selectedChat = useSelector((state) => state.chat.selectedChat);
