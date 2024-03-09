@@ -6,13 +6,13 @@ import VerifyJWT from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chat.route.js";
 import messageRouter from "./routes/chatMessage.route.js";
+import unreadmessageRouter from "./routes/unreadmessages.route.js";
+
 import cors from "cors";
 import { app, server } from "./socket/index.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
-
-
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -32,6 +32,8 @@ app.use("/api/user", userRouter);
 app.use("/api/chat", chatRouter);
 
 app.use("/api/message", messageRouter);
+
+app.use("/api/unread-message", unreadmessageRouter);
 
 connectDB().then(() => {
   server.listen(PORT, () => {

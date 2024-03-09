@@ -6,6 +6,8 @@ import Chatmessage from "../models/chatMessage.model.js";
 import asyncHandler from "express-async-handler";
 import { io } from "../socket/index.js";
 import { ChatAggeragtion } from "./chat.controller.js";
+import UnreadMessage from "../models/UnreadMessage.model.js";
+import { createOrUpdateUnReadMessages } from "./unreadmessages.controller.js";
 
 /**
  *  Aggregate Chat Messages
@@ -125,7 +127,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     },
     ...ChatAggeragtion(),
   ]);
-  console.log(populatedUpdateChat);
+
   // structure the message
   const newMessage = await Chatmessage.aggregate([
     {
@@ -136,9 +138,19 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   const recivedMessage = newMessage[0];
 
-  updatedChat.members.forEach((memebr) => {
+  updatedChat.members.forEach(async (memebr) => {
     if (memebr._id != req.user._id) {
-      io.to(memebr._id.toString()).emit("new message", recivedMessage);
+      //if user is not active then store notification on database
+      if (!io.sockets.adapter.rooms.has(memebr._id.toString())) {
+        await createOrUpdateUnReadMessages({
+          userId: memebr._id,
+          messageId: recivedMessage._id,
+          chatId: recivedMessage.chat,
+        });
+      } else {
+        //if use is active then emit event for new message;
+        io.to(memebr._id.toString()).emit("new message", recivedMessage);
+      }
     }
   });
 
