@@ -30,6 +30,11 @@ const Chat = ({ chat }) => {
     (item) => item.username != userData.username
   )[0];
 
+  // console.log("check");
+  // console.log(chat?.lastMessage?.sender._id.toString());
+  // console.log(userData._id.toString())
+  // console.log(chat?.lastMessage?.sender._id.toString() == userData._id.toString());
+
   return (
     <div>
       <div
@@ -60,7 +65,8 @@ const Chat = ({ chat }) => {
             {chat.isGroup ? chat?.name : oneToOneChatMemeber.username}
             {chat?.lastMessage && (
               <div>
-                {chat?.lastMessage?.sender._id == userData._id
+                {chat?.lastMessage?.sender._id.toString() ==
+                userData._id.toString()
                   ? "You : "
                   : chat.lastMessage?.sender?.username + ": "}
                 {chat.lastMessage.content}

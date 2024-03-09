@@ -71,6 +71,7 @@ const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
         const { data } = res;
         toast.success(res.message);
         setIsFormOpen(false);
+        setMember(null);
       },
       (err) => {
         toast.error(err);

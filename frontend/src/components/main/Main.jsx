@@ -10,6 +10,7 @@ import { useAuthContext } from "../../context/authSlice";
 import { useSocketContext } from "../../context/SocketContext";
 import useMessages from "../../context/zustand/message";
 import useListenMessages from "../../utills/useListneMessages";
+import Message from "./Message";
 
 const Main = () => {
   const { selectedChat } = useChatContext();
@@ -20,7 +21,6 @@ const Main = () => {
   const { socket } = useSocketContext();
 
   const { messages, setMessages } = useMessages();
-
 
   useEffect(() => {
     if (selectedChat) {
@@ -86,25 +86,7 @@ const Main = () => {
           <></>
         )}
         {messages.map((msg, index) => (
-          <div
-            className={`flex ${
-              msg.sender?._id == userData._id ? "justify-end" : "justify-start"
-            } items-start mb-4`}
-            ref={lastmessageIndex}
-            key={index}
-          >
-            <img
-              src={msg.sender?.avatar}
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full mr-2"
-            />
-            <div className="bg-gray-200 rounded-lg p-3">
-              <p className="text-sm text-gray-800">{msg.content}</p>
-              <span className="text-xs text-gray-600">
-                {moment(msg.createdAt).format("MMMM Do YY, h:mm a")}
-              </span>
-            </div>
-          </div>
+          <Message msg={msg} key={index} lastmessageIndex={lastmessageIndex} />
         ))}
       </div>
       <div className="fixed bottom-0 w-full shadow-md z-10">
