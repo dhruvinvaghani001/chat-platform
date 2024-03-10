@@ -53,7 +53,6 @@ const Chat = ({ chat }) => {
             setLoading,
             (res) => {
               const { data } = res;
-              console.log(data);
             },
             (err) => {
               toast.error(err);

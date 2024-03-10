@@ -78,7 +78,7 @@ const ChatForm = ({ setIsOpen }) => {
   };
 
   return (
-    <div className="mt-2">
+    <div className="mt-8">
       <div className="flex items-center mb-6 justify-start">
         <Toggle enabled={enabled} setEnabled={setEnabled} />
         <p className="text-black text-lg ml-2">is group chat ?</p>

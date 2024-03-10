@@ -142,8 +142,13 @@ const getUnreadMessages = () => {
 };
 
 const deleteUnreadMessages = (chatId) => {
-  console.log(chatId);
   return axiosInstance.delete(`unread-message/${chatId}`);
+};
+
+const addunreadMessage = ({ userId, messageId, chatId }) => {
+  return axiosInstance.post(
+    `unread-message/u/${userId}/c/${chatId}/m/${messageId}`
+  );
 };
 
 export {
@@ -161,4 +166,5 @@ export {
   addMemberInGroup,
   getUnreadMessages,
   deleteUnreadMessages,
+  addunreadMessage
 };

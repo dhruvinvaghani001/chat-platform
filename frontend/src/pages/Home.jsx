@@ -40,13 +40,18 @@ const Home = () => {
       (res) => {
         console.log(res);
         const { data } = res;
-        dispatch(setintialUnreadMessages({ messages: data }));
+        const dataTostore = data.map((message) => {
+          return { ...message, fromDb: true };
+        });
+        dispatch(setintialUnreadMessages({ messages: dataTostore }));
       },
       (err) => {
         toast.error(err);
       }
     );
   }, []);
+
+  
 
   return (
     <>
