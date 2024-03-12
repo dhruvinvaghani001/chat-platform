@@ -11,7 +11,10 @@ import path, { dirname } from "path";
 
 import cors from "cors";
 import { app, server } from "./socket/index.js";
-import { upload, uploadForMessageFile } from "./middlewares/multer.middleware.js";
+import {
+  upload,
+  uploadForMessageFile,
+} from "./middlewares/multer.middleware.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -45,7 +48,9 @@ app.use("/api/message", messageRouter);
 
 app.use("/api/unread-message", unreadmessageRouter);
 
-
+app.use("/", (req, res) => {
+  res.send("hello");
+});
 
 connectDB().then(() => {
   server.listen(PORT, () => {
