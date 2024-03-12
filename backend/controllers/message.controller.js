@@ -85,7 +85,9 @@ const sendMessage = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
 
-  if (!content) {
+  console.log(req.files);
+
+  if (!content && !req?.files?.attachmentFiles?.length) {
     return res
       .status(400)
       .json(new ApiError(400, "content required to send message!"));
@@ -97,11 +99,22 @@ const sendMessage = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiError(404, "Chat not found !"));
   }
 
+  // const attachfiles = [];
+  const attachfiles = req?.files?.attachmentFiles?.map((iteam) => {
+    return {
+      url: `${req.protocol}/${req.get("host")}/images/${iteam.filename}`,
+      localPath: `public/images/${iteam.filename}`,
+    };
+  });
+  
+  // console.log(attachfiles);
+
   // create new message
   const message = await Chatmessage.create({
     sender: new mongoose.Types.ObjectId(req.user._id),
     content,
     chat: new mongoose.Types.ObjectId(chatId),
+    attachmentFiles: attachfiles || [],
   });
 
   if (!message) {

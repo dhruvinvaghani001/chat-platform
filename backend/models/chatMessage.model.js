@@ -9,13 +9,17 @@ const messageShcema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
     },
-    chat:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Chat"
-    }
-    
+    chat: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
+    },
+    attachmentFiles : [
+      {
+        url: String, // it stores server path of image
+        localPath: String, //it stores local path its not necessary but we streo
+      },
+    ],
   },
   { timestamps: true }
 );
