@@ -15,7 +15,7 @@ const MessageContainer = ({ loading }) => {
 
   return (
     <>
-      <div className="messages__container mt-40 pb-16 ">
+      <div className="messages__container mt-40 pb-16 mb-40">
         {!selectedChat && (
           <h1 className="flex justify-center text-2xl">
             Please select chat to start Conversation!
