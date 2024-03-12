@@ -102,11 +102,11 @@ const sendMessage = asyncHandler(async (req, res) => {
   // const attachfiles = [];
   const attachfiles = req?.files?.attachmentFiles?.map((iteam) => {
     return {
-      url: `${req.protocol}/${req.get("host")}/images/${iteam.filename}`,
+      url: `${req.protocol}://${req.get("host")}/images/${iteam.filename}`,
       localPath: `public/images/${iteam.filename}`,
     };
   });
-  
+
   // console.log(attachfiles);
 
   // create new message
