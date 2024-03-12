@@ -6,6 +6,7 @@ import Chatmessage from "../models/chatMessage.model.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
 import { io } from "../socket/index.js";
+import fs from "fs";
 
 /**
  * @description : to structure chat model as our requirement
@@ -85,7 +86,23 @@ const deleteCascadeMessages = asynHandler(async (chatId) => {
   const messages = await Chatmessage.find({
     chat: new mongoose.Types.ObjectId(chatId),
   });
+  let attachments = [];
 
+  // get the attachments present in the messages
+  attachments = attachments.concat(
+    ...messages.map((message) => {
+      return message.attachmentFiles;
+    })
+  );
+
+  attachments.forEach((attachment) => {
+    fs.unlink(attachment.localPath, (err) => {
+      if (err) console.log("Error while removing local files: ", err);
+      else {
+        console.log("Removed local: ", attachment.localPath);
+      }
+    });
+  });
   //delete all messages
   await Chatmessage.deleteMany({
     chat: new mongoose.Types.ObjectId(chatId),
@@ -675,7 +692,7 @@ const leaveGroup = asynHandler(async (req, res) => {
 });
 
 /**
- * Handles request to fetch all conversation of logged in user    
+ * Handles request to fetch all conversation of logged in user
  * @params : -
  * @desciption : to fetch all conversation in which logged in user is involve
  * @return : strcutued chat []

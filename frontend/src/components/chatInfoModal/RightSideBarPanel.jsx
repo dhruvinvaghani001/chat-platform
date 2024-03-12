@@ -8,7 +8,8 @@ import ComboBox from "../sidebar/ComboBox";
 import { requestHandler } from "../../utills";
 import { addMemberInGroup, deleteChats, leaveGroup } from "../../api/api";
 import toast from "react-hot-toast";
-import { useChatContext } from "../../context/chatSlice";
+import { setSelectedChat } from "../../context/chatSlice";
+import { useDispatch } from "react-redux";
 
 const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
   const { userData } = useAuthContext();
@@ -16,6 +17,7 @@ const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
   const alredyInGroup = chat.members.map((user) => user._id.toString());
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   // handles to delete chat on forntend siude which calls required api ;
   const handleDeleteChat = () => {
@@ -28,6 +30,7 @@ const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
           const { data } = res;
           console.log(res);
           toast.success(res.message);
+          dispatch(setSelectedChat({ chat: null }));
           toggleIsOpen();
         },
         (err) => {
@@ -48,6 +51,7 @@ const RightSideBarPanel = ({ toggleIsOpen, open, chat }) => {
           const { data } = res;
           console.log(data);
           toast.success(res.message);
+
           toggleIsOpen();
         },
         (err) => {
