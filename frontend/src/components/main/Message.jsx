@@ -6,7 +6,7 @@ import { useChatContext } from "../../context/chatSlice";
 const Message = ({ msg, lastmessageIndex }) => {
   const { userData } = useAuthContext();
   const { selectedChat } = useChatContext();
-  
+
   return (
     <div
       className={`flex ${
@@ -24,9 +24,10 @@ const Message = ({ msg, lastmessageIndex }) => {
           <p className="text-sm text-gray-900">{msg.sender.username}</p>
         )}
         <div class="grid grid-cols-2 gap-2">
-          {msg?.attachmentFiles?.map((file) => (
+          {msg?.attachmentFiles?.map((file, index) => (
             <img
               src={file.url}
+              key={index}
               alt="Image 1"
               width="200"
               height="200"

@@ -28,17 +28,10 @@ const MessageContainer = ({ loading }) => {
         ) : (
           <></>
         )}
-        {loading ? (
-          <LoadingSpinner className="flex justify-center" />
-        ) : (
-          messages.map((msg, index) => (
-            <Message
-              msg={msg}
-              key={index}
-              lastmessageIndex={lastmessageIndex}
-            />
-          ))
-        )}
+
+        {messages.map((msg, index) => (
+          <Message msg={msg} key={index} lastmessageIndex={lastmessageIndex} />
+        ))}
       </div>
     </>
   );
