@@ -109,7 +109,7 @@ const ChatForm = ({ setIsOpen }) => {
 
           <Button className="py-2 px-4 mt-4 flex  items-center bg-violet-700">
             <p className="mr-2 text-xl">{loading ? "Creating..." : "Create"}</p>
-            {loading ? <LoadingSpinner /> : null}
+            {loading ? <LoadingSpinner height={32} width={32} /> : null}
           </Button>
         </form>
       </div>

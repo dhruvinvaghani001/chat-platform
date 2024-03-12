@@ -1,17 +1,17 @@
 import React from "react";
 import { Puff } from "react-loader-spinner";
 
-const LoadingSpinner = () => {
+const LoadingSpinner = ({ className = "", height, width }) => {
   return (
     <>
       <Puff
         visible={true}
-        height="32"
-        width="32"
+        height={height}
+        width={width}
         color="white"
         ariaLabel="puff-loading"
         wrapperStyle={{}}
-        wrapperClass=""
+        wrapperClass={className}
       />
     </>
   );
