@@ -10,7 +10,7 @@ const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (userData) {
-      const socketInstance = io("http://localhost:5000");
+      const socketInstance = io(import.meta.env.VITE_SOCKET_URL);
       setSocket(socketInstance);
 
       return () => {
@@ -26,7 +26,7 @@ const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     socket?.emit("setup", { userId: userData._id });
-  },[socket]);
+  }, [socket]);
 
   return (
     <socketContext.Provider value={{ socket }}>
