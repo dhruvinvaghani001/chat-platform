@@ -30,15 +30,7 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-app.use(
-  cors({
-    origin:
-      process.env.CORS_ORIGIN === "*"
-        ? "*" // This might give CORS error for some origins due to credentials set to true
-        : process.env.CORS_ORIGIN?.split(","),
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use("/api/user", userRouter);
 

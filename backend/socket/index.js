@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URl,
     methods: ["GET", "POST"],
   },
 });
@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
   //   const members = chat.members.filter(
   //     (memebr) => memebr._id != message.sender._id
   //   );
-  //   console.log(members) 
+  //   console.log(members)
   //   members.forEach((element) => {
   //     socket.in(element._id.toString()).emit("new message recived", message);
   //   });
