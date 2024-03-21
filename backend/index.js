@@ -44,12 +44,12 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: process.env.CORS_ORIGIN,
+//     credentials: true,
+//   })
+// );
 
 app.use("/api/user", userRouter);
 
@@ -59,9 +59,9 @@ app.use("/api/message", messageRouter);
 
 app.use("/api/unread-message", unreadmessageRouter);
 
-app.use("/", (req, res) => {
-  res.send("hello");
-});
+// app.use("/", (req, res) => {
+//   res.send("hello");
+// });
 
 connectDB().then(() => {
   server.listen(PORT, () => {
