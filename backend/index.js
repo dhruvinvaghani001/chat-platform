@@ -17,6 +17,7 @@ import {
 } from "./middlewares/multer.middleware.js";
 
 dotenv.config();
+
 const PORT = process.env.PORT;
 
 app.use(express.json());
@@ -29,6 +30,19 @@ const __dirname = dirname(__filename);
 const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
+
+if (process.env.NODE_ENV === "production") {
+  var newPath = __dirname.replace(/\\backend$/, "");
+  app.use(express.static(path.join(newPath, "/frontend/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(newPath, "frontend", "dist", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
+}
 
 app.use(
   cors({
