@@ -11,13 +11,14 @@ import { useDispatch } from "react-redux";
 import { useChatContext } from "../../context/chatSlice";
 import { requestHandler } from "../../utills";
 import { addunreadMessage } from "../../api/api";
+import { useNavigate } from "react-router-dom";
 import { XCircle } from "lucide-react";
 
 const SideBarHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState(false);
-
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   function closeModal() {
     setIsOpen(false);
@@ -30,7 +31,6 @@ const SideBarHeader = () => {
     e.preventDefault();
 
     unreadMessages.forEach(async (message) => {
-      console.log("checking", !message?.fromDb);
       if (!message?.fromDb) {
         requestHandler(
           async () =>
@@ -81,6 +81,7 @@ const SideBarHeader = () => {
             await handleUnreadMessages(e);
             dispatch(storeLogout());
             localStorage.clear();
+            navigate("/login");
           }}
         >
           <LogOut />

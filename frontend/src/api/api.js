@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 });
 
 /*
- * add interceptor to all outgoing request
+ * add interceptor to all outgoing request to backend
  * to add Authorizatoin header in all requests ,
  */
 axiosInstance.interceptors.request.use(
@@ -166,5 +166,5 @@ export {
   addMemberInGroup,
   getUnreadMessages,
   deleteUnreadMessages,
-  addunreadMessage
+  addunreadMessage,
 };
