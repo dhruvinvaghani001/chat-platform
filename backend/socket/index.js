@@ -8,10 +8,6 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   pingTimeout: 60000,
-  cors: {
-    origin: process.env.FRONTEND_URl,
-    methods: ["GET", "POST"],
-  },
 });
 
 io.on("connection", (socket) => {
