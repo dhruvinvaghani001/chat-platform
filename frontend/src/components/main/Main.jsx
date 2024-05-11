@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "../../context/authSlice";
 import { useSocketContext } from "../../context/SocketContext";
 import useMessages from "../../context/zustand/message";
-import useListenMessages from "../../utills/useListneMessages";
+import useListenEvents from "../../Hooks/useListenEvents";
 
 import MessageInput from "./MessageInput";
 import MainHeader from "./MainHeader";
@@ -33,7 +33,7 @@ const Main = () => {
     }
   }, [selectedChat]);
 
-  useListenMessages();
+  useListenEvents();
 
   return (
     <div className="container mx-auto relative ">

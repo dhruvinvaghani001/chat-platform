@@ -20,6 +20,7 @@ const AllChats = () => {
       setLoading,
       (res) => {
         const { data } = res;
+        console.log(res);
         dispatch(setChats({ chat: data }));
       },
       (err) => {

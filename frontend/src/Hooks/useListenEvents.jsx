@@ -13,7 +13,7 @@ import { useAuthContext } from "../context/authSlice";
 import useMessages from "../context/zustand/message";
 import { useDispatch } from "react-redux";
 
-const useListenMessages = () => {
+const useListenEvents = () => {
   const { socket } = useSocketContext();
   const { userData } = useAuthContext();
   const { selectedChat } = useChatContext();
@@ -69,4 +69,4 @@ const useListenMessages = () => {
   }, [socket]);
 };
 
-export default useListenMessages;
+export default useListenEvents;

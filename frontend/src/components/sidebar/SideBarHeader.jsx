@@ -18,7 +18,6 @@ const SideBarHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   function closeModal() {
     setIsOpen(false);
@@ -81,7 +80,6 @@ const SideBarHeader = () => {
             await handleUnreadMessages(e);
             dispatch(storeLogout());
             localStorage.clear();
-            navigate("/login");
           }}
         >
           <LogOut />
