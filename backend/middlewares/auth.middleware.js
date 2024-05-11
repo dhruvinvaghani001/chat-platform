@@ -8,16 +8,18 @@ import jwt from "jsonwebtoken";
 const VerifyJWT = async (req, res, next) => {
   try {
     const token =
-      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
       return res.status(401).json(new ApiError(401, "Unauthenticated user !"));
     }
 
-    const decodedData = await jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET
-    );
+    const decodedData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    console.log("decoded data ");
+
+    console.log(decodedData);
 
     if (!decodedData) {
       return res.status(401).json(new ApiError(401, "token expirres"));
@@ -26,6 +28,7 @@ const VerifyJWT = async (req, res, next) => {
       next();
     }
   } catch (error) {
+    console.log(error);
     return res.status(401).json(new ApiError(401, "token expires!"));
   }
 };

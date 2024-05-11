@@ -31,25 +31,25 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-if (process.env.NODE_ENV === "production") {
-  var newPath = __dirname.replace(/\\backend$/, "");
-  app.use(express.static(path.join(newPath, "/frontend/dist")));
+// if (process.env.NODE_ENV === "production") {s
+//   var newPath = __dirname.replace(/\\backend$/, "");
+//   app.use(express.static(path.join(newPath, "/frontend/dist")));
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(newPath, "frontend", "dist", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
-}
+//   app.get("*", (req, res) =>
+//     res.sendFile(path.resolve(newPath, "frontend", "dist", "index.html"))
+//   );
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("API is running..");
+//   });
+// }
 
-// app.use(
-//   cors({
-//     origin: process.env.CORS_ORIGIN,
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 app.use("/api/user", userRouter);
 
