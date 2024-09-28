@@ -47,19 +47,21 @@ const signUp = asyncHandler(async (req, res) => {
       .json(new ApiError(409, "password and confirm password must be same"));
   }
 
-  const avatarLocalFilePath = req.file?.path;
+  // const avatarLocalFilePath = req.file?.path;
 
-  if (!avatarLocalFilePath) {
-    return res.status(400).json(new ApiError(400, "avatar image required !"));
-  }
+  // if (!avatarLocalFilePath) {
+  //   return res.status(400).json(new ApiError(400, "avatar image required !"));
+  // }
 
-  const avataResponse = await uploadOnCloudinary(avatarLocalFilePath);
+  //const avataResponse = await uploadOnCloudinary(avatarLocalFilePath);
+
+  const avatarURI = `https://api.dicebear.com/9.x/lorelei/svg?seed=${username}`
 
   const user = await User.create({
     username,
     email,
     password,
-    avatar: avataResponse?.url,
+    avatar: avatarURI,
   });
 
   if (!user) {
