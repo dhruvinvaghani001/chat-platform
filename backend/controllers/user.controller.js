@@ -27,9 +27,9 @@ const genrateAccessAndRefreshToken = async (userId) => {
     @routes : api/user/sign-up 
 */
 const signUp = asyncHandler(async (req, res) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { username, email, password, confirmpassword } = req.body;
 
-  if (!username || !email || !password || !confirmPassword) {
+  if (!username || !email || !password || !confirmpassword) {
     return res.status(400).json(new ApiError(400, "All fields are requied !"));
   }
 
@@ -41,7 +41,7 @@ const signUp = asyncHandler(async (req, res) => {
       .json(new ApiError(409, "User Aledy exist with this username or email"));
   }
 
-  if (password != confirmPassword) {
+  if (password != confirmpassword) {
     return res
       .status(409)
       .json(new ApiError(409, "password and confirm password must be same"));
@@ -83,6 +83,7 @@ const signUp = asyncHandler(async (req, res) => {
 */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log("login called");
   if (!email || !password) {
     return res.status(400).json(new ApiError(400, "All fields are Required !"));
   }
