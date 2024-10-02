@@ -41,7 +41,7 @@ var corsOptions = {
     }
   },
   credentials: true, // Allow credentials
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 }
 

@@ -252,6 +252,9 @@ const deleteOneToOneChat = asynHandler(async (req, res) => {
   }
 
   chat[0]?.members.forEach((member) => {
+    console.log("emitting eventtodelete chat");
+    console.log("deleting from backend one to one chat:");
+    console.log(member._id);
     io.in(member._id.toString()).emit("delete-chat", chat[0]);
   });
 
@@ -465,6 +468,8 @@ const deleteGroup = asynHandler(async (req, res) => {
   });
 
   await deleteCascadeMessages(chatId);
+
+  console.log("group deleted from backend");
 
   return res.status(200).json(new ApiResponse(200, {}, "Group deleted!"));
 });
