@@ -22,7 +22,7 @@ router.route("/c/:chatId").delete(deleteOneToOneChat)
 router.route("/group").post(createGroup);
 router.route("/group/:chatId").get(getDetailsOfGroupChat).patch(renameGroup).delete(deleteGroup);
 
-router.route("/group/:chatId/add/:memberId").patch(addMemberInGroupChat)
+router.route("/group/:chatId/add").patch(addMemberInGroupChat)
 router.route("/group/:chatId/remove/:memberId").patch(removeMemberFromGroup)
 
 router.route("/group/leave/:chatId").patch(leaveGroup);

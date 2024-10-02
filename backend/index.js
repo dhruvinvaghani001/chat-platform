@@ -31,25 +31,21 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-// if (process.env.NODE_ENV === "production") {s
-//   var newPath = __dirname.replace(/\\backend$/, "");
-//   app.use(express.static(path.join(newPath, "/frontend/dist")));
+var whitelist = ['http://localhost:5173', 'http://localhost:5174']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true, // Allow credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+}
 
-//   app.get("*", (req, res) =>
-//     res.sendFile(path.resolve(newPath, "frontend", "dist", "index.html"))
-//   );
-// } else {
-//   app.get("/", (req, res) => {
-//     res.send("API is running..");
-//   });
-// }
-
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use("/api/user", userRouter);
 
@@ -59,9 +55,9 @@ app.use("/api/message", messageRouter);
 
 app.use("/api/unread-message", unreadmessageRouter);
 
-// app.use("/", (req, res) => {
-//   res.send("hello");
-// });
+app.use("/", (req, res) => {
+  res.send("hello");
+});
 
 connectDB().then(() => {
   server.listen(PORT, () => {

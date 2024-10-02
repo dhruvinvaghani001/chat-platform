@@ -477,7 +477,15 @@ const deleteGroup = asynHandler(async (req, res) => {
  * @routes : api/chat/group/:chatId/add/:memberId  (DELETE)
  */
 const addMemberInGroupChat = asynHandler(async (req, res) => {
-  const { chatId, memberId } = req.params;
+  const { chatId } = req.params;
+  const { memberIds } = req.body;
+
+  if (memberIds.length === 0 || !Array.isArray(memberIds)) {
+    return res.status(400).json(
+      new ApiError(400,"provide memeber ids")
+    )
+  }
+
 
   const groupChat = await Chat.aggregate([
     {
@@ -488,32 +496,37 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
     },
   ]);
 
-  const user = await User.findById(new mongoose.Types.ObjectId(memberId));
-
   if (!groupChat[0]) {
     return res.status(404).json(new ApiError(404, "group does not exist !"));
   }
 
-  if (!user) {
-    return res.status(404).json(new ApiError(404, "user does not found !"));
-  }
+  
 
   if (groupChat[0].admin.toString() !== req.user._id.toString()) {
     return res.status(401).json(new ApiError(401, "you are not admin !"));
   }
-  const members = groupChat[0].members.map((id) => id.toString());
+  const alredyMembers = groupChat[0].members.map((id) => id.toString());
 
-  if (members.includes(memberId)) {
-    return res
-      .status(400)
-      .json(new ApiError(400, "member alredy part of group chat !"));
+  const newMemberIds = memberIds.filter((id)=>!alredyMembers.includes(id))
+
+  if (newMemberIds.length == 0) {
+    return res.status(400).json(new ApiError(400,"All provided memebrs are alredy "))
+  }
+
+
+  const users = await User.find({ _id: { $in: newMemberIds } });
+
+  if (users.length != newMemberIds.length) {
+    return res.status(404).json(new  ApiError(404,"some users not found!"))
   }
 
   const updateGroup = await Chat.findByIdAndUpdate(
     groupChat[0]._id,
     {
       $push: {
-        members: new mongoose.Types.ObjectId(memberId),
+        members: {
+          $each: newMemberIds.map(id => new mongoose.Types.ObjectId(id))
+        },
       },
     },
     {
@@ -536,12 +549,17 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
 
   //emit chat-update event for all other memebrs in group to update chat !
   chat[0]?.members.forEach((member) => {
-    if (member._id.toString() == memberId) return;
+    if (newMemberIds.includes(member._id.toString())) return;
     io.in(member._id.toString()).emit("chat-update", chat[0]);
   });
+
+
+
   const payload = chat[0];
-  // memeber which is added emit new-chat event to add event in there context
-  io.in(memberId).emit("new chat", payload);
+  // newmemeber which is added emit new-chat event to add event in there context
+  newMemberIds.forEach((memberId) => {
+    io.in(memberId).emit("new chat", chat[0]);
+  })
 
   return res
     .status(200)
