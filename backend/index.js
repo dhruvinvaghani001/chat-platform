@@ -34,18 +34,15 @@ app.use(express.static(publicPath));
 
 const whitelist = process.env.ALLOW_ORIGINS.split(',');
 
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }, // Allow credentials
-  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'], // Allowed methods
-}
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin:
+      process.env.CORS_ORIGIN === "*"
+        ? "*"
+        : process.env.CORS_ORIGIN?.split(","),
+    credentials: true,
+  })
+);
 
 app.use("/api/user", userRouter);
 
