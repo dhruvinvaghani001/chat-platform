@@ -215,6 +215,7 @@ const createOneToOneOrGetChat = asynHandler(async (req, res) => {
 
   createdChat[0].members.forEach((member) => {
     if (member._id != req.user._id) {
+      console.log("CREATE ONE TO ONE CHAT");
       io.to(member._id.toString()).emit("new chat", payload);
     }
   });
@@ -555,7 +556,7 @@ const addMemberInGroupChat = asynHandler(async (req, res) => {
   //emit chat-update event for all other memebrs in group to update chat !
   chat[0]?.members.forEach((member) => {
     if (newMemberIds.includes(member._id.toString())) return;
-    io.in(member._id.toString()).emit("chat-update", chat[0]);
+    io.in(member._id.toString()).emit("group-update", chat[0]);
   });
 
 
@@ -634,7 +635,7 @@ const removeMemberFromGroup = asynHandler(async (req, res) => {
 
   //update-chat for remaininig group memebers :
   chat[0]?.members.forEach((member) => {
-    io.in(member._id.toString()).emit("chat-update", chat[0]);
+    io.in(member._id.toString()).emit("group-update", chat[0]);
   });
   //delete-chat from user which is removed :
   io.in(memberId).emit("delete-chat", chat[0]);
