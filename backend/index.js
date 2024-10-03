@@ -31,7 +31,9 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-var whitelist = ['http://localhost:5173', 'http://localhost:5174']
+
+const whitelist = process.env.ALLOW_ORIGINS.split(',');
+
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -45,7 +47,7 @@ var corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 }
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use("/api/user", userRouter);
 
