@@ -31,16 +31,14 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-
-const whitelist = process.env.ALLOW_ORIGINS.split(',');
-
-
+const whitelist = process.env.ALLOW_ORIGINS.split(",");
 
 app.use(
   cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: process.env.ALLOW_ORIGINS === "*" ? "*" : whitelist,
+    credetail: process.env.ALLOW_ORIGINS === "*" ? false : true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
