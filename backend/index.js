@@ -35,8 +35,8 @@ const whitelist = process.env.ALLOW_ORIGINS.split(",");
 
 app.use(
   cors({
-    origin: process.env.ALLOW_ORIGINS === "*" ? "*" : whitelist,
-    credetail: process.env.ALLOW_ORIGINS === "*" ? false : true,
+    origin: "https://chatly-delta.vercel.app/",
+    credetail: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
