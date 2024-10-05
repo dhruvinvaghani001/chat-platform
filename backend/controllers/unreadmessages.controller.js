@@ -80,6 +80,11 @@ const getUnreadMessageBymember = asyncHandler(async (req, res) => {
   console.log("from unreadmessages");
   console.log(req.user._id);
 
+  console.log("hello");
+  const data = await UnreadMessage.find({
+    user:new mongoose.Types.ObjectId(req.user._id);
+  })
+
   const unreadMessages = await UnreadMessage.aggregate([
     {
       $match: {
@@ -88,6 +93,8 @@ const getUnreadMessageBymember = asyncHandler(async (req, res) => {
     },
     ...pipeline,
   ]);
+
+  console.log(unreadMessages);
 
   const messsages = unreadMessages?.map((iteam) => iteam?.result);
 
