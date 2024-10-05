@@ -82,7 +82,7 @@ const getUnreadMessageBymember = asyncHandler(async (req, res) => {
 
   console.log("hello");
   const data = await UnreadMessage.find({
-    user:new mongoose.Types.ObjectId(req.user._id);
+    user:new mongoose.Types.ObjectId(req.user._id)
   })
 
   const unreadMessages = await UnreadMessage.aggregate([

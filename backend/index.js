@@ -31,16 +31,24 @@ const publicPath = path.join(__dirname, "public");
 
 app.use(express.static(publicPath));
 
-const whitelist = process.env.ALLOW_ORIGINS.split(",");
+const whitelist = process.env.ALLOW_ORIGINS;
 
 app.use(
   cors({
-    origin: "https://chatly-delta.vercel.app",
-    credentials: true,
+    origin: process.env.ALLOW_ORIGINS === "*" ? "*" : process.env.ALLOW_ORIGINS,
+    credentials: process.env.ALLOW_ORIGINS === "*" ? false : true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// app.use(
+//   cors({
+//     originn: "*",
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Conntent-Type", "Authorization"],
+//   })
+// );
 
 app.use("/api/user", userRouter);
 
