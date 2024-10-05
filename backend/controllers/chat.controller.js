@@ -705,7 +705,7 @@ const leaveGroup = asynHandler(async (req, res) => {
 
   // emit chat-update event for remaining participate in group
   chat[0].members.forEach((member) => {
-    io.in(member._id.toString()).emit("chat-update", chat[0]);
+    io.in(member._id.toString()).emit("group-update", chat[0]);
   });
   //now logged in user leave the group so delete chat from logged in user chat's context
   io.in(req.user._id.toString()).emit("delete-chat", chat[0]);
