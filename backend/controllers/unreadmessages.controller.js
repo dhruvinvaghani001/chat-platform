@@ -77,6 +77,9 @@ const getUnreadMessageBymember = asyncHandler(async (req, res) => {
     },
   ];
 
+  console.log("from unreadmessages");
+  console.log(req.user._id);
+
   const unreadMessages = await UnreadMessage.aggregate([
     {
       $match: {
@@ -157,39 +160,29 @@ const addunreadMessage = asyncHandler(async (req, res) => {
   }
 });
 
+const addBulk = asyncHandler(async (req, res) => {
+  const { values, userId } = req.body;
 
-const addBulk = asyncHandler(async (req,res) => {
-  const { values, userId } = req.body
-  
-  const convertedData = values.map(item => ({
-  user: new mongoose.Types.ObjectId(userId),
-  chat: new mongoose.Types.ObjectId(item.chatId),
-  unreadMesssage: item.messageIds.map(msgId => new mongoose.Types.ObjectId(msgId))
+  const convertedData = values.map((item) => ({
+    user: new mongoose.Types.ObjectId(userId),
+    chat: new mongoose.Types.ObjectId(item.chatId),
+    unreadMesssage: item.messageIds.map(
+      (msgId) => new mongoose.Types.ObjectId(msgId)
+    ),
   }));
 
   console.log("convetyred chat data to bulk");
   console.log(convertedData);
 
-  
   const a = await UnreadMessage.insertMany(convertedData);
 
-  
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        a || [],
-        "added"
-      )
-    );
-  
-})
+  return res.status(200).json(new ApiResponse(200, a || [], "added"));
+});
 
 export {
   getUnreadMessageBymember,
   deleteUnreadMessages,
   createOrUpdateUnReadMessages,
   addunreadMessage,
-  addBulk
+  addBulk,
 };
