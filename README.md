@@ -5,5 +5,7 @@
 
 [▶️ Watch Demo on Youtube](https://youtu.be/aNTh0akAVh8)
 
+[🌎 Live Link](https://chatly-delta.vercel.app/)
+
 
 
